@@ -222,7 +222,6 @@ namespace V1000_ModbusRTU
             _ParamValDisp = p_ValDisp;
         }
 
-        
         public ushort ParamVal
         {
             get => _ParamVal;
@@ -262,7 +261,7 @@ namespace V1000_ModbusRTU
     {
         public string ParamName;
         public string ParamNum;
-        public string DefVal;
+        public string Value;
         public string RegAddress;
         public string Multiplier;
         public string NumBase;
@@ -273,7 +272,7 @@ namespace V1000_ModbusRTU
             RegAddress = "";
             ParamNum = "";
             ParamName = "";
-            DefVal = "";
+            Value = "";
             Multiplier = "";
             NumBase = "";
             Units = "";

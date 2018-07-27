@@ -67,12 +67,16 @@
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ctxtSchedChng = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtSchedChng_Save = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvParamViewMod = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ctxtDriveMod = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtDriveMod_Save = new System.Windows.Forms.ToolStripMenuItem();
             this.lblParamModSched = new System.Windows.Forms.Label();
             this.btnVFDMod = new System.Windows.Forms.Button();
             this.bwrkModVFD = new System.ComponentModel.BackgroundWorker();
@@ -89,18 +93,20 @@
             this.btnVFDMon = new System.Windows.Forms.Button();
             this.btnVFDReset = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openParameterListingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveParameterListingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.msFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.msFile_LoadParamList = new System.Windows.Forms.ToolStripMenuItem();
+            this.msFile_SaveParamList = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.msFile_Exit = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpCommSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewFull)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).BeginInit();
+            this.ctxtSchedChng.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMod)).BeginInit();
+            this.ctxtDriveMod.SuspendLayout();
             this.grpFullParamInfo.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -109,21 +115,24 @@
             // 
             // txtSlaveAddr
             // 
-            this.txtSlaveAddr.Location = new System.Drawing.Point(659, 21);
+            this.txtSlaveAddr.Enabled = false;
+            this.txtSlaveAddr.Location = new System.Drawing.Point(558, 21);
             this.txtSlaveAddr.Name = "txtSlaveAddr";
             this.txtSlaveAddr.Size = new System.Drawing.Size(46, 20);
-            this.txtSlaveAddr.TabIndex = 0;
-            this.txtSlaveAddr.Text = "1F";
+            this.txtSlaveAddr.TabIndex = 98;
+            this.txtSlaveAddr.TabStop = false;
             this.txtSlaveAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtSlaveAddr.Enter += new System.EventHandler(this.txtSlaveAddr_Enter);
+            this.txtSlaveAddr.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSlaveAddr_KeyDown);
             // 
             // lblSlaveAddr
             // 
             this.lblSlaveAddr.AutoSize = true;
-            this.lblSlaveAddr.Location = new System.Drawing.Point(549, 24);
+            this.lblSlaveAddr.Location = new System.Drawing.Point(474, 24);
             this.lblSlaveAddr.Name = "lblSlaveAddr";
-            this.lblSlaveAddr.Size = new System.Drawing.Size(104, 13);
+            this.lblSlaveAddr.Size = new System.Drawing.Size(78, 13);
             this.lblSlaveAddr.TabIndex = 14;
-            this.lblSlaveAddr.Text = "Slave Address (hex):";
+            this.lblSlaveAddr.Text = "Slave Address:";
             this.lblSlaveAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // grpCommSettings
@@ -134,7 +143,7 @@
             this.grpCommSettings.Controls.Add(this.lblSerialCommPort);
             this.grpCommSettings.Location = new System.Drawing.Point(7, 45);
             this.grpCommSettings.Name = "grpCommSettings";
-            this.grpCommSettings.Size = new System.Drawing.Size(711, 53);
+            this.grpCommSettings.Size = new System.Drawing.Size(610, 53);
             this.grpCommSettings.TabIndex = 27;
             this.grpCommSettings.TabStop = false;
             this.grpCommSettings.Text = "Serial Communication Settings";
@@ -179,11 +188,15 @@
             this.cmParmName,
             this.cmDefVal,
             this.cmVFDVal});
-            this.dgvParamViewFull.Location = new System.Drawing.Point(6, 61);
+            this.dgvParamViewFull.Location = new System.Drawing.Point(6, 85);
             this.dgvParamViewFull.Name = "dgvParamViewFull";
-            this.dgvParamViewFull.Size = new System.Drawing.Size(699, 698);
+            this.dgvParamViewFull.RowHeadersVisible = false;
+            this.dgvParamViewFull.Size = new System.Drawing.Size(600, 674);
             this.dgvParamViewFull.TabIndex = 36;
+            this.dgvParamViewFull.TabStop = false;
+            this.dgvParamViewFull.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvParamViewFull_CellBeginEdit);
             this.dgvParamViewFull.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvParamViewFull_CellEndEdit);
+            this.dgvParamViewFull.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvParamViewFull_CellValueChanged);
             // 
             // cmRegAddr
             // 
@@ -249,7 +262,7 @@
             this.statProgress});
             this.statusStrip1.Location = new System.Drawing.Point(0, 877);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1833, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1256, 22);
             this.statusStrip1.TabIndex = 37;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -269,10 +282,10 @@
             // btnVFDRead
             // 
             this.btnVFDRead.Enabled = false;
-            this.btnVFDRead.Location = new System.Drawing.Point(9, 19);
+            this.btnVFDRead.Location = new System.Drawing.Point(5, 18);
             this.btnVFDRead.Name = "btnVFDRead";
-            this.btnVFDRead.Size = new System.Drawing.Size(165, 23);
-            this.btnVFDRead.TabIndex = 38;
+            this.btnVFDRead.Size = new System.Drawing.Size(130, 23);
+            this.btnVFDRead.TabIndex = 2;
             this.btnVFDRead.Text = "Read VFD Parameter Settings";
             this.btnVFDRead.UseVisualStyleBackColor = true;
             this.btnVFDRead.Click += new System.EventHandler(this.btnReadVFD_Click);
@@ -298,10 +311,12 @@
             this.dataGridViewTextBoxColumn3,
             this.dataGridViewTextBoxColumn4,
             this.dataGridViewTextBoxColumn5});
-            this.dgvParamViewChng.Location = new System.Drawing.Point(6, 61);
+            this.dgvParamViewChng.ContextMenuStrip = this.ctxtSchedChng;
+            this.dgvParamViewChng.Location = new System.Drawing.Point(5, 85);
             this.dgvParamViewChng.Name = "dgvParamViewChng";
-            this.dgvParamViewChng.Size = new System.Drawing.Size(700, 325);
+            this.dgvParamViewChng.Size = new System.Drawing.Size(600, 320);
             this.dgvParamViewChng.TabIndex = 40;
+            this.dgvParamViewChng.TabStop = false;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -359,6 +374,21 @@
             this.dataGridViewTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewTextBoxColumn5.Width = 70;
             // 
+            // ctxtSchedChng
+            // 
+            this.ctxtSchedChng.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtSchedChng_Save});
+            this.ctxtSchedChng.Name = "ctxtSchedChng";
+            this.ctxtSchedChng.Size = new System.Drawing.Size(205, 26);
+            this.ctxtSchedChng.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtSchedChng_Opening);
+            // 
+            // ctxtSchedChng_Save
+            // 
+            this.ctxtSchedChng_Save.Name = "ctxtSchedChng_Save";
+            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(204, 22);
+            this.ctxtSchedChng_Save.Text = "Save Parameter Changes";
+            this.ctxtSchedChng_Save.Click += new System.EventHandler(this.SaveParams);
+            // 
             // dgvParamViewMod
             // 
             this.dgvParamViewMod.AllowUserToAddRows = false;
@@ -372,10 +402,12 @@
             this.dataGridViewTextBoxColumn8,
             this.dataGridViewTextBoxColumn9,
             this.dataGridViewTextBoxColumn10});
-            this.dgvParamViewMod.Location = new System.Drawing.Point(5, 434);
+            this.dgvParamViewMod.ContextMenuStrip = this.ctxtDriveMod;
+            this.dgvParamViewMod.Location = new System.Drawing.Point(9, 439);
             this.dgvParamViewMod.Name = "dgvParamViewMod";
-            this.dgvParamViewMod.Size = new System.Drawing.Size(700, 325);
+            this.dgvParamViewMod.Size = new System.Drawing.Size(600, 320);
             this.dgvParamViewMod.TabIndex = 41;
+            this.dgvParamViewMod.TabStop = false;
             // 
             // dataGridViewTextBoxColumn6
             // 
@@ -434,10 +466,25 @@
             this.dataGridViewTextBoxColumn10.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewTextBoxColumn10.Width = 70;
             // 
+            // ctxtDriveMod
+            // 
+            this.ctxtDriveMod.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtDriveMod_Save});
+            this.ctxtDriveMod.Name = "ctxtDriveMod";
+            this.ctxtDriveMod.Size = new System.Drawing.Size(212, 26);
+            this.ctxtDriveMod.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtDriveMod_Opening);
+            // 
+            // ctxtDriveMod_Save
+            // 
+            this.ctxtDriveMod_Save.Name = "ctxtDriveMod_Save";
+            this.ctxtDriveMod_Save.Size = new System.Drawing.Size(211, 22);
+            this.ctxtDriveMod_Save.Text = "Save Modified Parameters";
+            this.ctxtDriveMod_Save.Click += new System.EventHandler(this.SaveParams);
+            // 
             // lblParamModSched
             // 
             this.lblParamModSched.AutoSize = true;
-            this.lblParamModSched.Location = new System.Drawing.Point(6, 26);
+            this.lblParamModSched.Location = new System.Drawing.Point(6, 61);
             this.lblParamModSched.Name = "lblParamModSched";
             this.lblParamModSched.Size = new System.Drawing.Size(106, 13);
             this.lblParamModSched.TabIndex = 43;
@@ -446,10 +493,10 @@
             // btnVFDMod
             // 
             this.btnVFDMod.Enabled = false;
-            this.btnVFDMod.Location = new System.Drawing.Point(360, 19);
+            this.btnVFDMod.Location = new System.Drawing.Point(318, 19);
             this.btnVFDMod.Name = "btnVFDMod";
-            this.btnVFDMod.Size = new System.Drawing.Size(165, 23);
-            this.btnVFDMod.TabIndex = 44;
+            this.btnVFDMod.Size = new System.Drawing.Size(130, 23);
+            this.btnVFDMod.TabIndex = 4;
             this.btnVFDMod.Text = "Modify VFD Parameters";
             this.btnVFDMod.UseVisualStyleBackColor = true;
             this.btnVFDMod.Click += new System.EventHandler(this.btnModVFD_Click);
@@ -471,7 +518,7 @@
             this.grpFullParamInfo.Controls.Add(this.dgvParamViewFull);
             this.grpFullParamInfo.Location = new System.Drawing.Point(7, 104);
             this.grpFullParamInfo.Name = "grpFullParamInfo";
-            this.grpFullParamInfo.Size = new System.Drawing.Size(711, 765);
+            this.grpFullParamInfo.Size = new System.Drawing.Size(610, 765);
             this.grpFullParamInfo.TabIndex = 45;
             this.grpFullParamInfo.TabStop = false;
             this.grpFullParamInfo.Text = "VFD Complete Parameter Information";
@@ -479,7 +526,7 @@
             // lblParamGroup
             // 
             this.lblParamGroup.AutoSize = true;
-            this.lblParamGroup.Location = new System.Drawing.Point(368, 26);
+            this.lblParamGroup.Location = new System.Drawing.Point(6, 61);
             this.lblParamGroup.Name = "lblParamGroup";
             this.lblParamGroup.Size = new System.Drawing.Size(90, 13);
             this.lblParamGroup.TabIndex = 41;
@@ -488,7 +535,7 @@
             // lblDriveSel
             // 
             this.lblDriveSel.AutoSize = true;
-            this.lblDriveSel.Location = new System.Drawing.Point(6, 26);
+            this.lblDriveSel.Location = new System.Drawing.Point(14, 26);
             this.lblDriveSel.Name = "lblDriveSel";
             this.lblDriveSel.Size = new System.Drawing.Size(82, 13);
             this.lblDriveSel.TabIndex = 40;
@@ -498,20 +545,21 @@
             // 
             this.cmbDriveList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDriveList.FormattingEnabled = true;
-            this.cmbDriveList.Location = new System.Drawing.Point(94, 23);
+            this.cmbDriveList.Location = new System.Drawing.Point(102, 23);
             this.cmbDriveList.Name = "cmbDriveList";
-            this.cmbDriveList.Size = new System.Drawing.Size(226, 21);
-            this.cmbDriveList.TabIndex = 38;
+            this.cmbDriveList.Size = new System.Drawing.Size(277, 21);
+            this.cmbDriveList.TabIndex = 0;
             this.cmbDriveList.SelectedIndexChanged += new System.EventHandler(this.cmbDriveSel_SelectedIndexChanged);
             // 
             // cmbParamGroup
             // 
             this.cmbParamGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbParamGroup.Enabled = false;
             this.cmbParamGroup.FormattingEnabled = true;
-            this.cmbParamGroup.Location = new System.Drawing.Point(464, 22);
+            this.cmbParamGroup.Location = new System.Drawing.Point(102, 58);
             this.cmbParamGroup.Name = "cmbParamGroup";
-            this.cmbParamGroup.Size = new System.Drawing.Size(241, 21);
-            this.cmbParamGroup.TabIndex = 37;
+            this.cmbParamGroup.Size = new System.Drawing.Size(277, 21);
+            this.cmbParamGroup.TabIndex = 1;
             this.cmbParamGroup.SelectedIndexChanged += new System.EventHandler(this.cmbParamGroup_SelectedIndexChanged);
             // 
             // groupBox3
@@ -522,9 +570,9 @@
             this.groupBox3.Controls.Add(this.dgvParamViewChng);
             this.groupBox3.Controls.Add(this.dgvParamViewMod);
             this.groupBox3.Controls.Add(this.lblParamModSched);
-            this.groupBox3.Location = new System.Drawing.Point(747, 104);
+            this.groupBox3.Location = new System.Drawing.Point(638, 104);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(711, 765);
+            this.groupBox3.Size = new System.Drawing.Size(610, 765);
             this.groupBox3.TabIndex = 46;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VFD Modified Parameter Information";
@@ -532,7 +580,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 418);
+            this.label1.Location = new System.Drawing.Point(6, 423);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(134, 13);
             this.label1.TabIndex = 46;
@@ -540,7 +588,7 @@
             // 
             // txtParamChngSrc
             // 
-            this.txtParamChngSrc.Location = new System.Drawing.Point(584, 22);
+            this.txtParamChngSrc.Location = new System.Drawing.Point(484, 58);
             this.txtParamChngSrc.Name = "txtParamChngSrc";
             this.txtParamChngSrc.ReadOnly = true;
             this.txtParamChngSrc.Size = new System.Drawing.Size(121, 20);
@@ -549,7 +597,7 @@
             // lblParamChngSrc
             // 
             this.lblParamChngSrc.AutoSize = true;
-            this.lblParamChngSrc.Location = new System.Drawing.Point(494, 26);
+            this.lblParamChngSrc.Location = new System.Drawing.Point(394, 62);
             this.lblParamChngSrc.Name = "lblParamChngSrc";
             this.lblParamChngSrc.Size = new System.Drawing.Size(84, 13);
             this.lblParamChngSrc.TabIndex = 44;
@@ -561,9 +609,9 @@
             this.groupBox4.Controls.Add(this.btnVFDReset);
             this.groupBox4.Controls.Add(this.btnVFDRead);
             this.groupBox4.Controls.Add(this.btnVFDMod);
-            this.groupBox4.Location = new System.Drawing.Point(747, 45);
+            this.groupBox4.Location = new System.Drawing.Point(638, 45);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(711, 53);
+            this.groupBox4.Size = new System.Drawing.Size(610, 53);
             this.groupBox4.TabIndex = 47;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Drive Communication Commands";
@@ -571,20 +619,20 @@
             // btnVFDMon
             // 
             this.btnVFDMon.Enabled = false;
-            this.btnVFDMon.Location = new System.Drawing.Point(540, 19);
+            this.btnVFDMon.Location = new System.Drawing.Point(474, 19);
             this.btnVFDMon.Name = "btnVFDMon";
-            this.btnVFDMon.Size = new System.Drawing.Size(165, 23);
-            this.btnVFDMon.TabIndex = 46;
+            this.btnVFDMon.Size = new System.Drawing.Size(130, 23);
+            this.btnVFDMon.TabIndex = 99;
             this.btnVFDMon.Text = "Monitor VFD";
             this.btnVFDMon.UseVisualStyleBackColor = true;
             // 
             // btnVFDReset
             // 
             this.btnVFDReset.Enabled = false;
-            this.btnVFDReset.Location = new System.Drawing.Point(185, 19);
+            this.btnVFDReset.Location = new System.Drawing.Point(161, 18);
             this.btnVFDReset.Name = "btnVFDReset";
-            this.btnVFDReset.Size = new System.Drawing.Size(165, 23);
-            this.btnVFDReset.TabIndex = 45;
+            this.btnVFDReset.Size = new System.Drawing.Size(130, 23);
+            this.btnVFDReset.TabIndex = 3;
             this.btnVFDReset.Text = "Reintialize VFD";
             this.btnVFDReset.UseVisualStyleBackColor = true;
             this.btnVFDReset.Click += new System.EventHandler(this.btnVFDReset_Click);
@@ -592,47 +640,51 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
+            this.msFile,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1833, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1256, 24);
             this.menuStrip1.TabIndex = 48;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // fileToolStripMenuItem
+            // msFile
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openParameterListingToolStripMenuItem,
-            this.saveParameterListingToolStripMenuItem,
+            this.msFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.msFile_LoadParamList,
+            this.msFile_SaveParamList,
             this.toolStripSeparator1,
-            this.exitToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
+            this.msFile_Exit});
+            this.msFile.Name = "msFile";
+            this.msFile.Size = new System.Drawing.Size(37, 20);
+            this.msFile.Text = "&File";
             // 
-            // openParameterListingToolStripMenuItem
+            // msFile_LoadParamList
             // 
-            this.openParameterListingToolStripMenuItem.Name = "openParameterListingToolStripMenuItem";
-            this.openParameterListingToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.openParameterListingToolStripMenuItem.Text = "Open Parameter Listing";
+            this.msFile_LoadParamList.Enabled = false;
+            this.msFile_LoadParamList.Name = "msFile_LoadParamList";
+            this.msFile_LoadParamList.Size = new System.Drawing.Size(195, 22);
+            this.msFile_LoadParamList.Text = "&Load Parameter Listing";
+            this.msFile_LoadParamList.Click += new System.EventHandler(this.LoadParams);
             // 
-            // saveParameterListingToolStripMenuItem
+            // msFile_SaveParamList
             // 
-            this.saveParameterListingToolStripMenuItem.Name = "saveParameterListingToolStripMenuItem";
-            this.saveParameterListingToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.saveParameterListingToolStripMenuItem.Text = "Save Parameter Listing";
+            this.msFile_SaveParamList.Enabled = false;
+            this.msFile_SaveParamList.Name = "msFile_SaveParamList";
+            this.msFile_SaveParamList.Size = new System.Drawing.Size(195, 22);
+            this.msFile_SaveParamList.Text = "&Save Parameter Listing";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(195, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(192, 6);
             // 
-            // exitToolStripMenuItem
+            // msFile_Exit
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.msFile_Exit.Name = "msFile_Exit";
+            this.msFile_Exit.Size = new System.Drawing.Size(195, 22);
+            this.msFile_Exit.Text = "E&xit";
+            this.msFile_Exit.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -652,14 +704,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1833, 899);
+            this.ClientSize = new System.Drawing.Size(1256, 899);
             this.Controls.Add(this.grpCommSettings);
             this.Controls.Add(this.grpFullParamInfo);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox4);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "frmMain";
             this.Text = "VFD Parameter Programmer & Monitor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmMain_FormClosed);
@@ -670,7 +722,9 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).EndInit();
+            this.ctxtSchedChng.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMod)).EndInit();
+            this.ctxtDriveMod.ResumeLayout(false);
             this.grpFullParamInfo.ResumeLayout(false);
             this.grpFullParamInfo.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -729,13 +783,17 @@
         private System.Windows.Forms.Label lblParamGroup;
         private System.Windows.Forms.Label lblDriveSel;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openParameterListingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveParameterListingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem msFile;
+        private System.Windows.Forms.ToolStripMenuItem msFile_LoadParamList;
+        private System.Windows.Forms.ToolStripMenuItem msFile_SaveParamList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem msFile_Exit;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip ctxtDriveMod;
+        private System.Windows.Forms.ToolStripMenuItem ctxtDriveMod_Save;
+        private System.Windows.Forms.ContextMenuStrip ctxtSchedChng;
+        private System.Windows.Forms.ToolStripMenuItem ctxtSchedChng_Save;
     }
 }
 
