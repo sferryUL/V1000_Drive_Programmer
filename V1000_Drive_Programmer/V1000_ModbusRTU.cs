@@ -231,11 +231,32 @@ namespace V1000_ModbusRTU
             get => _ParamVal;
             set
             {
-                _ParamVal = value;
+                int round_val = 0;
+
+                this._ParamVal = value;
                 if (NumBase == 16)
-                    _ParamValDisp = "0x" + _ParamVal.ToString("X4");
+                    this._ParamValDisp = "0x" + this._ParamVal.ToString("X4");
                 else
-                    _ParamValDisp = ((float)_ParamVal/ Multiplier).ToString() + " " + Units;
+                {
+                    switch (this.Multiplier)
+                    {
+                        case 1:
+                            round_val = 0;
+                            break;
+                        case 10:
+                            round_val = 1;
+                            break;
+                        case 100:
+                            round_val = 2;
+                            break;
+                        case 1000:
+                            round_val = 3;
+                            break;
+                    }
+
+                    this._ParamValDisp = Math.Round(((Double)this._ParamVal / this.Multiplier), round_val).ToString() + " " + Units;
+                }
+                    
             }
         }
 
@@ -244,11 +265,31 @@ namespace V1000_ModbusRTU
             get => _DefVal;
             set
             {
+                int round_val = 0;
+
                 _DefVal = value;
                 if (NumBase == 16)
-                    _DefValDisp = "0x" + _DefVal.ToString("X4");
+                    this._DefValDisp = "0x" + this._DefVal.ToString("X4");
                 else
-                    _DefValDisp = ((float)_DefVal / Multiplier).ToString() + " " + Units;
+                {
+                    switch (this.Multiplier)
+                    {
+                        case 1:
+                            round_val = 0;
+                            break;
+                        case 10:
+                            round_val = 1;
+                            break;
+                        case 100:
+                            round_val = 2;
+                            break;
+                        case 1000:
+                            round_val = 3;
+                            break;
+                    }
+
+                    this._DefValDisp = Math.Round(((Double)this._DefVal / this.Multiplier), round_val).ToString() + " " + Units;
+                }
             }
         }
 

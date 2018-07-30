@@ -68,6 +68,8 @@
             this.btnVFDMod = new System.Windows.Forms.Button();
             this.bwrkModVFD = new System.ComponentModel.BackgroundWorker();
             this.grpFullParamInfo = new System.Windows.Forms.GroupBox();
+            this.lblDriveDuty = new System.Windows.Forms.Label();
+            this.cmbDriveDuty = new System.Windows.Forms.ComboBox();
             this.lblParamFullList = new System.Windows.Forms.Label();
             this.lblParamGroup = new System.Windows.Forms.Label();
             this.lblDriveSel = new System.Windows.Forms.Label();
@@ -365,6 +367,8 @@
             // 
             // grpFullParamInfo
             // 
+            this.grpFullParamInfo.Controls.Add(this.lblDriveDuty);
+            this.grpFullParamInfo.Controls.Add(this.cmbDriveDuty);
             this.grpFullParamInfo.Controls.Add(this.lblParamFullList);
             this.grpFullParamInfo.Controls.Add(this.lblParamGroup);
             this.grpFullParamInfo.Controls.Add(this.lblDriveSel);
@@ -377,6 +381,29 @@
             this.grpFullParamInfo.TabIndex = 45;
             this.grpFullParamInfo.TabStop = false;
             this.grpFullParamInfo.Text = "VFD Complete Parameter Information";
+            // 
+            // lblDriveDuty
+            // 
+            this.lblDriveDuty.AutoSize = true;
+            this.lblDriveDuty.Location = new System.Drawing.Point(410, 26);
+            this.lblDriveDuty.Name = "lblDriveDuty";
+            this.lblDriveDuty.Size = new System.Drawing.Size(82, 13);
+            this.lblDriveDuty.TabIndex = 49;
+            this.lblDriveDuty.Text = "Drive Selection:";
+            // 
+            // cmbDriveDuty
+            // 
+            this.cmbDriveDuty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDriveDuty.Enabled = false;
+            this.cmbDriveDuty.FormattingEnabled = true;
+            this.cmbDriveDuty.Items.AddRange(new object[] {
+            "Normal Duty",
+            "Heavy Duty"});
+            this.cmbDriveDuty.Location = new System.Drawing.Point(498, 23);
+            this.cmbDriveDuty.Name = "cmbDriveDuty";
+            this.cmbDriveDuty.Size = new System.Drawing.Size(106, 21);
+            this.cmbDriveDuty.TabIndex = 48;
+            this.cmbDriveDuty.SelectedIndexChanged += new System.EventHandler(this.cmbDriveDuty_SelectedIndexChanged);
             // 
             // lblParamFullList
             // 
@@ -554,7 +581,6 @@
             this.dgvParamViewChng.Size = new System.Drawing.Size(600, 305);
             this.dgvParamViewChng.TabIndex = 40;
             this.dgvParamViewChng.TabStop = false;
-            this.dgvParamViewChng.ColumnSortModeChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dgvParamViewChng_ColumnSortModeChanged);
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -978,6 +1004,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.Label lblDriveDuty;
+        private System.Windows.Forms.ComboBox cmbDriveDuty;
     }
 }
 

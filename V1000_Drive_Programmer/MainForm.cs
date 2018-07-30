@@ -24,7 +24,7 @@ namespace V1000_Param_Prog
     public partial class frmMain : Form
     {
         #region Global Class Object/Variable Declarations
-        
+
         // Database Manipulation Variables
         //string DataDir = "C:\\Users\\steve\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
         string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
@@ -36,6 +36,7 @@ namespace V1000_Param_Prog
         DataTable dtDriveList = new DataTable();
         DataTable dtParamGrpDesc = new DataTable();
         DataTable dtParamList = new DataTable();
+        DataTable dtParamHDMods = new DataTable();
 
 
         // VFD status and communication variables
@@ -50,11 +51,13 @@ namespace V1000_Param_Prog
 
         const byte VFD_V1000 = 0x01;
 
-        List<V1000_Param_Data> Param_List = new List<V1000_Param_Data>();
+        List<V1000_Param_Data> Param_List;
         List<V1000_Param_Data> Param_List_ND = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_List_HD = new List<V1000_Param_Data>();
+        List<V1000_Param_Data> Param_HD_Mods = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Mod = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Chng = new List<V1000_Param_Data>();
+        List<V1000_Param_Data> Param_Vrfy = new List<V1000_Param_Data>();
 
         // Background Worker status 
         ThreadProgressArgs ProgressArgs = new ThreadProgressArgs();
@@ -117,6 +120,139 @@ namespace V1000_Param_Prog
             spVFD.PortName = cmbSerialPort.GetItemText(cmbSerialPort.SelectedItem);
         }
 
+        private void cmbDriveSel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string file, conn_str;
+            cmbParamGroup.Items.Clear();
+            DataRow row = dtDriveList.Rows[cmbDriveList.SelectedIndex];
+
+            // Get the filename for master VFD parameter list based on the 
+            // drive selection and build the SQL database connection string.
+            file = row["PARAM_LIST"].ToString() + dbFileExt;
+            conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+
+            // Get the full table for the parameter list from the filename  via a SQL database connectoin
+            if (SQLGetTable(conn_str, ref dtParamList))
+            {
+                // Clear the master parameter list and the Full Parameter List datagridview
+                Param_List_ND.Clear();
+
+                // Populate the master parameter list with each of all the parameters that make
+                // up the entire database list and populate the Full Parameter List datagridview
+                foreach (DataRow dr in dtParamList.Rows)
+                {
+                    V1000_Param_Data param = new V1000_Param_Data();
+                    V1000SQLtoParam(dr, ref param);
+                    Param_List_ND.Add(param);
+                }
+
+                // Set the parameter indexing variables based on the drive type
+                SetMachineParamNums(VFD_V1000);
+
+                // Get the heavy duty modification parameters and build a connection  
+                // string only if a filename entry in the table exists.
+                file = row["PARAM_HD_MODS"].ToString() + dbFileExt;
+                if (file != "")
+                {
+                    conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+
+                    // Get the table containing the list of parameters automatically modified by a 
+                    // heavy-duty setting and fill  the the Param_HD_Mods list with all the values.
+                    if (SQLGetTable(conn_str, ref dtParamHDMods))
+                    {
+                        Param_HD_Mods.Clear();  // Clear the modified heavy-duty parameters list
+                        foreach (DataRow dr in dtParamHDMods.Rows)
+                        {
+                            // First find the index in the master parameter list for the  modified parameter
+                            int idx = GetParamIndex(dr["PARAMETER NUMBER"].ToString(), Param_List_ND);
+
+                            // Next we copy the default parameter information to the heavy-duty modified parameter list
+                            V1000_Param_Data param = new V1000_Param_Data();
+                            param = (V1000_Param_Data)Param_List_ND[idx].Clone();
+
+                            // Now we modify the parameter based on the list values
+                            param.DefVal = Cell2RegVal(dr["PARAMETER VALUE"].ToString(), Param_List_ND[idx]);
+                            Param_HD_Mods.Add(param);
+                        }
+
+                        // Clear the Heavy-Duty parameter listing and copy the normal duty values to it
+                        Param_List_HD.Clear();
+
+                        // Copy the Normal Duty list over to the Heavy-Duty List
+                        foreach (V1000_Param_Data p in Param_List_ND)
+                            Param_List_HD.Add((V1000_Param_Data)p.Clone());
+
+                        // Now update the parameters that are automatically modified based on a heavy-duty setting
+                        for (int i = 0; i < Param_HD_Mods.Count; i++)
+                        {
+                            // Find the index of the parameter 
+                            int index = GetParamIndex(Param_HD_Mods[i].RegAddress, Param_List_ND);
+
+                            // Update the default value to be the heavy-duty version
+                            Param_List_HD[index].DefVal = Param_HD_Mods[i].DefVal;
+                        }
+
+                    }
+                    cmbDriveDuty.SelectedIndex = 1;
+                    if (Param_HD_Mods.Count > 0)
+                        cmbDriveDuty.Enabled = true;
+
+                    // Get the list of parameter groupings available and fill the Parameter group combobox
+                    file = row["PARAM_GRP_DESC"].ToString() + dbFileExt;
+                    conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+
+                    if (SQLGetTable(conn_str, ref dtParamGrpDesc))
+                    {
+                        foreach (DataRow dr in dtParamGrpDesc.Rows)
+                        {
+                            string str = dr["PARAM_GRP"].ToString() + " - " + dr["GRP_DESC"].ToString();
+                            cmbParamGroup.Items.Add(str);
+                        }
+                        cmbParamGroup.Enabled = true;
+                        cmbParamGroup.SelectedIndex = 0;
+                    }
+
+                    // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
+                    SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
+                    btnParamMachSet.Enabled = true;                 // Turn on the Set Machine Parameters button
+                    cmbVoltMachSupply.Enabled = true;               // enable all the machine specific parameter setting comboboxes
+                    cmbVoltMotorMax.Enabled = true;
+                    cmbFreqMotorBase.Enabled = true;
+                    txtFLA.Enabled = true;                          // Turn on the Motor FLA textbox
+                    msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
+                }
+            }
+        }
+
+        private void cmbDriveDuty_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            // Set the Param_List list object to point to the appropriate list based on the drive duty selection
+            if (cmbDriveDuty.SelectedIndex == 0)
+                Param_List = Param_List_ND;
+            else
+                Param_List = Param_List_HD;
+
+            dgvParamViewFull.Rows.Clear();  // Clear the Full Parameter List datagridview
+
+            // Populate the Full Parameter List datagridview 
+            for (int i = 0; i < Param_List.Count; i++)
+            {
+                dgvParamViewFull.Rows.Add(new string[]
+                    {
+                            ("0x" + Param_List[i].RegAddress.ToString("X4")),
+                            Param_List[i].ParamNum,
+                            Param_List[i].ParamName,
+                            Param_List[i].DefValDisp
+                    });
+
+                // Clear the read-only flag for each populated datagridview row
+                dgvParamViewFull.Rows[i].Cells[4].ReadOnly = false;
+            }
+
+            dgvParamViewMod.Rows.Clear();
+        }
+
         private void cmbParamGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataRow row = dtParamGrpDesc.Rows[cmbParamGroup.SelectedIndex];
@@ -125,74 +261,6 @@ namespace V1000_Param_Prog
             dgvParamViewFull.Rows[index].Selected = true;
             dgvParamViewFull.FirstDisplayedScrollingRowIndex = index;
 
-        }
-
-        private void cmbDriveSel_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string file, conn_str;
-            cmbParamGroup.Items.Clear();
-            DataRow row = dtDriveList.Rows[cmbDriveList.SelectedIndex];
-
-            // Get the for parameter list based on the drive selection.
-            file = row["PARAM_LIST"].ToString() + dbFileExt;
-            conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
-            if (SQLGetTable(conn_str, ref dtParamList))
-            {
-                // Clear the master parameter list and the Full Parameter List datagridview
-                Param_List.Clear();
-                dgvParamViewFull.Rows.Clear();
-                
-                // Populate the master parameter list with each of all the parameters that make
-                // up the entire database list and populate the Full Parameter List datagridview
-                foreach (DataRow dr in dtParamList.Rows)
-                {
-                    V1000_Param_Data param = new V1000_Param_Data();
-                    V1000SQLtoParam(dr, ref param);
-                    Param_List.Add(param);
-                    dgvParamViewFull.Rows.Add(new string[]
-                        {
-                            ("0x" + param.RegAddress.ToString("X4")),
-                            param.ParamNum,
-                            param.ParamName,
-                            param.DefValDisp
-                        });
-                    dgvParamViewFull.Rows[dtParamList.Rows.IndexOf(dr)].Cells[4].ReadOnly = false;
-                }
-
-                // Turn on the Read VFD button
-                SetVFDCommBtnEnable(true, true, false, false);
-
-                // Turn on the Set Machine Parameters button
-                btnParamMachSet.Enabled = true;
-
-                // enable all the machine specific parameter setting comboboxes
-                cmbVoltMachSupply.Enabled = true;
-                cmbVoltMotorMax.Enabled = true;
-                cmbFreqMotorBase.Enabled = true;
-
-                // Turn on the Motor FLA textbox
-                txtFLA.Enabled = true;
-
-                SetMachineParamNums(VFD_V1000);
-
-                // Allow a parameter update spreadsheet to be loaded
-                msFile_LoadParamList.Enabled = true;
-            }
-
-            // Get the list of parameter groupings available and fill the Parameter group combobox
-            file = row["PARAM_GRP_DESC"].ToString() + dbFileExt;
-            conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
-            
-            if (SQLGetTable(conn_str, ref dtParamGrpDesc))
-            {
-                foreach (DataRow dr in dtParamGrpDesc.Rows)
-                {
-                    string str = dr["PARAM_GRP"].ToString() + " - " + dr["GRP_DESC"].ToString();
-                    cmbParamGroup.Items.Add(str);
-                }
-                cmbParamGroup.Enabled = true;
-                cmbParamGroup.SelectedIndex = 0;
-            }
         }
 
         private void cmbVoltMachSupply_SelectedIndexChanged(object sender, EventArgs e)
@@ -595,7 +663,7 @@ namespace V1000_Param_Prog
 
         }
         #endregion
-                
+
         #region VFD Reset Drive Back to Their Default Settings
 
         private void btnVFDReset_Click(object sender, EventArgs e)
@@ -737,17 +805,94 @@ namespace V1000_Param_Prog
 
         private void btnVFDVer_Click(object sender, EventArgs e)
         {
+            if (!bwrkVFDVerify.IsBusy)
+            {
+                ProgressArgs.ClearVFDVerVals();
+                ProgressArgs.VFDVer_Stat = ThreadProgressArgs.Stat_Running;
+                bwrkVFDVerify.RunWorkerAsync();
 
+                // Configure status bar for displaying VFD modified parameter verification progress
+                statProgLabel.Text = "VFD Parameter Modified Parameter Setting Progress: ";
+                statProgLabel.Visible = true;
+                statProgress.Visible = true;
+
+                btnVFDVer.Enabled = false; // disable the Modify VFD button while a write is in progress.
+            }
         }
 
         private void bwrkVFDVerify_DoWork(object sender, DoWorkEventArgs e)
         {
+            int status = 0;
+            V1000_ModbusRTU_Comm comm = new V1000_ModbusRTU_Comm();
+            ModbusRTUMsg msg = new ModbusRTUMsg(VFDSlaveAddr);
+            ModbusRTUMaster modbus = new ModbusRTUMaster();
+            List<ushort> val = new List<ushort>();
 
+            // proceed further only if opening of communication port is successful
+            if (comm.OpenCommPort(ref spVFD) == 0x0001)
+            {
+                ProgressArgs.VFDVer_Total_Units = Param_Chng.Count;
+
+                for (int i = 0; i < ProgressArgs.VFDVer_Total_Units; i++)
+                {
+                    ProgressArgs.VFDVer_Unit = i;
+                    ProgressArgs.VFDVer_Progress = (byte)(((float)i / ProgressArgs.VFDVer_Total_Units) * 100);
+                    bwrkVFDVerify.ReportProgress(ProgressArgs.VFDWrite_Progress);
+                    if (bwrkVFDVerify.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        ProgressArgs.VFDWrite_Stat = ThreadProgressArgs.Stat_Canceled;
+                        bwrkVFDVerify.ReportProgress(0);
+                        return;
+                    }
+
+                    msg.Clear();
+                    val.Clear();
+                    val.Add(Param_List[i].ParamVal);
+                    msg = modbus.CreateMessage(msg.SlaveAddr, ModbusRTUMaster.ReadReg, Param_List[i].RegAddress, 1, val);
+
+                    status = comm.DataTransfer(ref msg, ref spVFD);
+                    if (status != 0x0001)
+                    {
+                        MessageBox.Show("VFD Parameter Update Failure!!");
+                        e.Cancel = true;
+                        ProgressArgs.VFDWrite_Stat = ThreadProgressArgs.Stat_Error;
+                        bwrkVFDVerify.ReportProgress(0);
+                        break;
+                    }
+                    else if (msg.Data[0] != Param_List[i].ParamVal)
+                        ProgressArgs.VFDVer_ParamMismatch_Cnt++;
+                }
+
+
+                // Close the communication port
+                comm.CloseCommPort(ref spVFD);
+
+                // Update all the progress and status flags
+                ProgressArgs.VFDVer_Progress = 100;
+                ProgressArgs.VFDVer_Stat = ThreadProgressArgs.Stat_Complete;
+                e.Result = 0x02;
+                bwrkVFDVerify.ReportProgress(100);
+            }
         }
 
         private void bwrkVFDVerify_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            // clear all the status bar values and set them as invisible
+            statProgLabel.Text = "";
+            statProgLabel.Visible = false;
+            statProgress.Value = 0;
+            statProgress.Visible = false;
 
+            btnVFDVer.Enabled = true; // re-enable the VFD read button
+
+            if (ProgressArgs.VFDWrite_Stat == ThreadProgressArgs.Stat_Complete)
+            {
+                if (ProgressArgs.VFDVer_ParamMismatch_Cnt == 0)
+                    MessageBox.Show("VFD Programming Verification Complete, Drive Parameters Match Loaded Settings!");
+                else
+                    MessageBox.Show("VFD Programming Verification Failure! A total of " + ProgressArgs.VFDVer_ParamMismatch_Cnt.ToString() + "Parameters Did Not Match the Loaded Settings!");
+            }
         }
 
         #endregion
@@ -818,7 +963,6 @@ namespace V1000_Param_Prog
             }
         }
 
-
         #endregion
 
         #region Text Manipulation Functions
@@ -827,7 +971,7 @@ namespace V1000_Param_Prog
         {
             Single RetVal = 0;
 
-            
+
             // First check if the default parameter is a hex value so we can trim off the "0x" from the beginning
             if (p_Param.NumBase == 16)
             {
@@ -894,7 +1038,7 @@ namespace V1000_Param_Prog
             return RetVal;
         }
 
-        private Double Cell2Double(string p_CellVal)
+        private Double Cell2Double(string p_CellVal, byte p_RoundVal = 2)
         {
             Double RetVal = -1;
 
@@ -902,11 +1046,11 @@ namespace V1000_Param_Prog
             if (unit_index > 0)
             {
                 p_CellVal = p_CellVal.Substring(0, unit_index);
-                RetVal = Math.Round(Convert.ToDouble(p_CellVal), 2);
+                RetVal = Math.Round(Convert.ToDouble(p_CellVal), p_RoundVal);
             }
             // If there are no units then just convert the cell value to a single
             else
-                RetVal = Math.Round(Convert.ToDouble(p_CellVal), 2);
+                RetVal = Math.Round(Convert.ToDouble(p_CellVal), p_RoundVal);
 
             return RetVal;
         }
@@ -916,12 +1060,34 @@ namespace V1000_Param_Prog
             double val;
             ushort RegVal = 0;
 
-            val = Cell2Double(p_CellVal);
+            val = Cell2Double(p_CellVal, GetRoundCnt(p_Param.Multiplier));
             RegVal = (ushort)(val * p_Param.Multiplier);
 
             return RegVal;
         }
 
+        private byte GetRoundCnt(ushort p_Multiplier)
+        {
+            byte RoundCnt = 0;
+
+            switch (p_Multiplier)
+            {
+                case 1:
+                    RoundCnt = 0;
+                    break;
+                case 10:
+                    RoundCnt = 1;
+                    break;
+                case 100:
+                    RoundCnt = 2;
+                    break;
+                case 1000:
+                    RoundCnt = 3;
+                    break;
+            }
+
+            return RoundCnt;
+        }
 
         private byte Hex2Byte(string p_CellVal)
         {
@@ -946,6 +1112,8 @@ namespace V1000_Param_Prog
 
             return RetVal;
         }
+
+        
 
         #endregion
 
@@ -1154,9 +1322,20 @@ namespace V1000_Param_Prog
             return Index;
         }
 
-        private void dgvParamViewChng_ColumnSortModeChanged(object sender, DataGridViewColumnEventArgs e)
+        private int GetParamIndex(ushort p_RegAddr, List<V1000_Param_Data> p_List)
         {
-            
+            int Index = -1;
+
+            for (int i = 0; i < p_List.Count; i++)
+            {
+                if (p_List[i].RegAddress == p_RegAddr)
+                {
+                    Index = i;
+                    break;
+                }
+            }
+
+            return Index;
         }
     }
 
@@ -1167,7 +1346,7 @@ namespace V1000_Param_Prog
         // Mode Legend:
         public const byte VFDReadMode = 0x00;
         public const byte VFDWriteMode = 0x01;
-        public const byte VFDMonMode = 0x02;
+        public const byte VFDVerMode = 0x02;
 
         public byte Mode_Sel = 0;
 
@@ -1178,20 +1357,24 @@ namespace V1000_Param_Prog
         public const byte Stat_Canceled = 0x03;
         public const byte Stat_Error = 0xFF;
 
-        public byte   VFDRead_Stat = 0;
-        public byte   VFDRead_ErrCode = 0;
-        public int    VFDRead_Unit = 0;
-        public int    VFDRead_Total_Units = 0;
-        public byte   VFDRead_Progress = 0;
-        public string VFDRead_ParamNum = "";
-        public string VFDRead_ParamName = "";
+        public byte     VFDRead_Stat = 0;
+        public byte     VFDRead_ErrCode = 0;
+        public int      VFDRead_Unit = 0;
+        public int      VFDRead_Total_Units = 0;
+        public byte     VFDRead_Progress = 0;
 
-        public byte VFDWrite_Stat = 0;
-        public byte VFDWrite_ErrCode = 0;
-        public int VFDWrite_Unit = 0;
-        public int VFDWrite_Total_Units = 0;
-        public byte VFDWrite_Progress = 0;
+        public byte     VFDWrite_Stat = 0;
+        public byte     VFDWrite_ErrCode = 0;
+        public int      VFDWrite_Unit = 0;
+        public int      VFDWrite_Total_Units = 0;
+        public byte     VFDWrite_Progress = 0;
 
+        public byte     VFDVer_Stat = 0;
+        public byte     VFDVer_ErrCode = 0;
+        public int      VFDVer_Unit = 0;
+        public int      VFDVer_Total_Units = 0;
+        public byte     VFDVer_Progress = 0;
+        public int      VFDVer_ParamMismatch_Cnt = 0;
 
         public ThreadProgressArgs() { }
 
@@ -1202,14 +1385,19 @@ namespace V1000_Param_Prog
             VFDRead_Unit = 0;
             VFDRead_Total_Units = 0;
             VFDRead_Progress = 0;
-            VFDRead_ParamNum = "";
-            VFDRead_ParamName = "";
 
             VFDWrite_Stat = 0;
             VFDWrite_ErrCode = 0;
             VFDWrite_Unit = 0;
             VFDWrite_Total_Units = 0;
             VFDWrite_Progress = 0;
+
+            VFDVer_Stat = 0;
+            VFDVer_ErrCode = 0;
+            VFDVer_Unit = 0;
+            VFDVer_Total_Units = 0;
+            VFDVer_Progress = 0;
+            VFDVer_ParamMismatch_Cnt = 0;
     }
 
         public void ClearVFDReadVals()
@@ -1219,8 +1407,6 @@ namespace V1000_Param_Prog
             VFDRead_Unit = 0;
             VFDRead_Total_Units = 0;
             VFDRead_Progress = 0;
-            VFDRead_ParamNum = "";
-            VFDRead_ParamName = "";
         }
 
         public void ClearVFDWriteVals()
@@ -1231,6 +1417,15 @@ namespace V1000_Param_Prog
             VFDWrite_Total_Units = 0;
             VFDWrite_Progress = 0;
         }
-    }
 
+        public void ClearVFDVerVals()
+        {
+            VFDVer_Stat = 0;
+            VFDVer_ErrCode = 0;
+            VFDVer_Unit = 0;
+            VFDVer_Total_Units = 0;
+            VFDVer_Progress = 0;
+            VFDVer_ParamMismatch_Cnt = 0;
+        }
+    }
 }
