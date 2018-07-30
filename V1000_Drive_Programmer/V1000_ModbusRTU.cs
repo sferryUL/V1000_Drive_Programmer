@@ -25,7 +25,7 @@ namespace V1000_ModbusRTU
         // also account for the master length of time to send the message. I can't tell if the serial 
         // port function waits until transmission is complete to release or if it is a background process.
         const int DelayWriteMsgMin = 210;
-        const int DelayEnterMax = 2000;
+        const int DelayEnterMax = 4000;
         const int RespWriteByte = 8;
 
         const int RespLoopbackByte = 8;
@@ -177,7 +177,7 @@ namespace V1000_ModbusRTU
 
 
 
-    public class V1000_Param_Data : ICloneable
+    public class V1000_Param_Data : ICloneable, IComparable<V1000_Param_Data>
     {
         public ushort RegAddress;
         public string ParamNum;
@@ -186,6 +186,10 @@ namespace V1000_ModbusRTU
         public byte   NumBase;
         public string Units;
 
+        public const string VoltSuppParam = "E1-01";
+        public const string VoltMaxOutParam = "E1-05";
+        public const string FreqBaseParam = "E1-06";
+        public const string RatedCurrParam = "E2-01";
 
         private ushort _DefVal;
         private ushort _ParamVal;
@@ -254,6 +258,11 @@ namespace V1000_ModbusRTU
         public object Clone()
         {
             return new V1000_Param_Data(this.RegAddress, this.ParamNum, this.ParamName, this.ParamVal, this.DefVal, this.Multiplier, this.NumBase, this.Units, this.DefValDisp, this.ParamValDisp);
+        }
+
+        public int CompareTo(V1000_Param_Data p_CompParam)
+        {
+            return this.ParamNum.CompareTo(p_CompParam.ParamNum);
         }
     }
     

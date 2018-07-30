@@ -24,6 +24,7 @@ namespace V1000_Param_Prog
     public partial class frmMain : Form
     {
         #region Global Class Object/Variable Declarations
+        
         // Database Manipulation Variables
         //string DataDir = "C:\\Users\\steve\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
         string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
@@ -42,7 +43,16 @@ namespace V1000_Param_Prog
         byte VFDSlaveAddr = 0x1F;
 
         // VFD Parameter Objects 
+        string VoltSupplyParamNum;
+        string VoltMaxOutParamNum;
+        string FreqBaseParamNum;
+        string RatedCurrParamNum;
+
+        const byte VFD_V1000 = 0x01;
+
         List<V1000_Param_Data> Param_List = new List<V1000_Param_Data>();
+        List<V1000_Param_Data> Param_List_ND = new List<V1000_Param_Data>();
+        List<V1000_Param_Data> Param_List_HD = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Mod = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Chng = new List<V1000_Param_Data>();
 
@@ -150,7 +160,20 @@ namespace V1000_Param_Prog
                 }
 
                 // Turn on the Read VFD button
-                SetVFDCommBtnEnable(true, false, false, false);
+                SetVFDCommBtnEnable(true, true, false, false);
+
+                // Turn on the Set Machine Parameters button
+                btnParamMachSet.Enabled = true;
+
+                // enable all the machine specific parameter setting comboboxes
+                cmbVoltMachSupply.Enabled = true;
+                cmbVoltMotorMax.Enabled = true;
+                cmbFreqMotorBase.Enabled = true;
+
+                // Turn on the Motor FLA textbox
+                txtFLA.Enabled = true;
+
+                SetMachineParamNums(VFD_V1000);
 
                 // Allow a parameter update spreadsheet to be loaded
                 msFile_LoadParamList.Enabled = true;
@@ -172,14 +195,20 @@ namespace V1000_Param_Prog
             }
         }
 
+        private void cmbVoltMachSupply_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbVoltMotorMax.SelectedIndex = cmbVoltMachSupply.SelectedIndex;
+        }
+
+        private void cmbVoltMotorMax_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbVoltMachSupply.SelectedIndex == -1)
+                cmbVoltMachSupply.SelectedIndex = cmbVoltMotorMax.SelectedIndex;
+        }
+
         #endregion
 
         #region Textbox Functions
-
-        private void txtSlaveAddr_Enter(object sender, EventArgs e)
-        {
-
-        }
 
         private void txtSlaveAddr_KeyDown(object sender, KeyEventArgs e)
         {
@@ -223,8 +252,8 @@ namespace V1000_Param_Prog
             // try to get default and changed cell values in a version that can be compared
             try
             {
-                def_val = CelltoSingle((String)dgvParamViewFull.Rows[e.RowIndex].Cells[3].Value, Param_List[e.RowIndex]);
-                chng_val = CelltoSingle((String)dgvParamViewFull.Rows[e.RowIndex].Cells[4].Value, Param_List[e.RowIndex]);
+                def_val = Cell2Single((String)dgvParamViewFull.Rows[e.RowIndex].Cells[3].Value, Param_List[e.RowIndex]);
+                chng_val = Cell2Single((String)dgvParamViewFull.Rows[e.RowIndex].Cells[4].Value, Param_List[e.RowIndex]);
             }
             // if an exception is thrown, then just reset the cell value back
             // to what it was before the edit took place
@@ -242,134 +271,6 @@ namespace V1000_Param_Prog
             ushort chng_param_val = (ushort)temp_float;
 
             UpdateParamViews(chng_param_val, e.RowIndex);
-
-            /*
-            if (VFDReadRegCnt > 0)
-            {
-                if (chng_param_val != Param_List[index].ParamVal)
-                    val_chng = true;
-            }
-            else
-            {
-                if (chng_param_val != Param_List[index].DefVal)
-                    val_chng = true;
-            }
-
-            // Check and see if the parameter value actually changed. Just double-clicking on the cell and 
-            // hitting enter will cause this event to trigger even if the value does not change.
-            //if (chng_param_val != Param_List[index].ParamVal)
-            if (val_chng)
-            {
-                // Check and see if this parameter is already scheduled to be changed. 
-                V1000_Param_Data param = new V1000_Param_Data();
-                param = (V1000_Param_Data)Param_List[index].Clone();
-                int chng_index = -1;
-                for (int i = 0; i < Param_Chng.Count; i++)
-                {
-                    // If there is a register address match then the parameter was scheduled for change
-                    if (Param_Chng[i].RegAddress == param.RegAddress)
-                    {
-                        chng_index = i;                             // Set the change index
-                        Param_Chng[i].ParamVal = chng_param_val;    // Update the Param_Chng parameter value
-
-                        // Update the both the Full List and Scheduled Change datagridviews
-                        dgvParamViewChng.Rows[i].Cells[4].Value = Param_Chng[i].ParamValDisp;
-                        dgvParamViewFull.Rows[index].Cells[4].Value = Param_Chng[i].ParamValDisp;
-                        break;
-                    }
-                }
-
-                // If the change index is less then 0 then this parameter is not already scheduled to be 
-                // changed. We add it to the Param_Chng list as well as to the Scheduled Change datagridview
-                if (chng_index < 0)
-                {
-                    // Copy the full parameter data to a list that contains scheduled changed values.
-                    Param_Chng.Add((V1000_Param_Data)Param_List[index].Clone());
-
-                    // Overwrite the copied current parameter value with new changed value
-                    Param_Chng[Param_Chng.Count - 1].ParamVal = chng_param_val;
-
-                    // Clone the row with the changed value and add it to the Datagridview for scheduled parameter changes.
-                    DataGridViewRow ClonedRow = (DataGridViewRow)dgvParamViewFull.Rows[index].Clone();
-                    for (int i = 0; i < dgvParamViewFull.Rows[index].Cells.Count; i++)
-                        ClonedRow.Cells[i].Value = dgvParamViewFull.Rows[index].Cells[i].Value;
-                    ClonedRow.Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
-                    ClonedRow.DefaultCellStyle.BackColor = Color.White;
-                    dgvParamViewChng.Rows.Add(ClonedRow);
-
-                    // Fix the user entry to be the properly formatted string from any inaccuracies in formatting by the user.
-                    dgvParamViewFull.Rows[index].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
-
-                    // Highlight the scheduled changed parameter in the default parameter and current VFD parameter 
-                    // in Green-Yellow to signify that a change is scheduled for that particular parameter.
-                    dgvParamViewFull.Rows[index].DefaultCellStyle.BackColor = Color.GreenYellow;
-
-                    // If there is more than one modified parameter enable the Modify VFD Parameters button.
-                    if ((Param_Chng.Count > 0) && (VFDReadRegCnt > 0))
-                        btnVFDMod.Enabled = true;
-                }
-            } // if(val_chng)
-            else
-            {
-                // First check and see if the VFD has been read or not. 
-                if (VFDReadRegCnt > 0)
-                {
-                    // If it has the set the VFD value back to what the display formatted  value
-                    // was when it was originally read.
-                    dgvParamViewFull.Rows[index].Cells[4].Value = Param_List[index].ParamValDisp;
-
-                    // Check and see if that VFD value was the same as the default value or not.
-                    // If it was different than the default value set the row color to yellow,
-                    // if it was the same as the default value set the row color back to white.
-                    if (Param_List[index].ParamVal != Param_List[index].DefVal)
-                        dgvParamViewFull.Rows[index].DefaultCellStyle.BackColor = Color.Yellow;
-                    else
-                        dgvParamViewFull.Rows[index].DefaultCellStyle.BackColor = Color.White;
-                }
-                else
-                // If the VFD has not been read then set the value back to blank and set the 
-                // row color back to white because it may have been changed previously.
-                {
-                    dgvParamViewFull.Rows[index].Cells[4].Value = Param_List[index].DefValDisp;
-                    dgvParamViewFull.Rows[index].DefaultCellStyle.BackColor = Color.White;
-                }
-
-                // Check and see if this value was scheduled to be changed
-                V1000_Param_Data param = new V1000_Param_Data();
-                param = (V1000_Param_Data)Param_List[index].Clone();
-                for (int i = 0; i < Param_Chng.Count; i++)
-                {
-                    // We determine if the parameter was scheduled to change by the register 
-                    // address. If we find a match we remove it from the list of scheduled
-                    // changes as well as the Schedule Change datagridview.
-                    if (Param_Chng[i].RegAddress == param.RegAddress)
-                    {
-                        Param_Chng.RemoveAt(i);
-                        dgvParamViewChng.Rows.RemoveAt(i);
-                        break;
-                    }
-                }
-            } // else if (val_change)
-
-            if (Param_Chng.Count > 0)
-            {
-                // Turn on Modify VFD button by turning on bit 2
-                SetVFDCommBtnEnable((GetVFDCommBtnStat() | (byte)0x04));
-
-                // Allow scheduled parameter list to be saved
-                msFile_SaveParamList.Enabled = true;
-            }
-            else
-            {
-                // Turn off Modify VFD button by turning off bit 2
-                SetVFDCommBtnEnable((GetVFDCommBtnStat() & (byte)0xFB));
-
-                // Disable the save parameter list option if the list of modified parameter 
-                // list is 0
-                if (Param_Mod.Count == 0)
-                    msFile_SaveParamList.Enabled = false;
-            }
-            */
         }
 
         private void UpdateParamViews(ushort p_NewParamVal, int p_Index)
@@ -421,6 +322,9 @@ namespace V1000_Param_Prog
                     // Overwrite the copied current parameter value with new changed value
                     Param_Chng[Param_Chng.Count - 1].ParamVal = p_NewParamVal;
 
+                    // Sort parameter change list in ascending order based on the parameter number
+                    Param_Chng.Sort();
+
                     // Clone the row with the changed value and add it to the Datagridview for scheduled parameter changes.
                     DataGridViewRow ClonedRow = (DataGridViewRow)dgvParamViewFull.Rows[p_Index].Clone();
                     for (int i = 0; i < dgvParamViewFull.Rows[p_Index].Cells.Count; i++)
@@ -435,6 +339,8 @@ namespace V1000_Param_Prog
                     // Highlight the scheduled changed parameter in the default parameter and current VFD parameter 
                     // in Green-Yellow to signify that a change is scheduled for that particular parameter.
                     dgvParamViewFull.Rows[p_Index].DefaultCellStyle.BackColor = Color.GreenYellow;
+
+                    dgvParamViewChng.Sort(dgvParamViewChng.Columns[1], ListSortDirection.Ascending);
 
                     // If there is more than one modified parameter enable the Modify VFD Parameters button.
                     if ((Param_Chng.Count > 0) && (VFDReadRegCnt > 0))
@@ -485,16 +391,16 @@ namespace V1000_Param_Prog
 
             if (Param_Chng.Count > 0)
             {
-                // Turn on Modify VFD button by turning on bit 2
-                SetVFDCommBtnEnable((GetVFDCommBtnStat() | (byte)0x04));
+                // Turn on Modify VFD and Verify VFD buttons by turning on bits 2 & 3
+                SetVFDCommBtnEnable((GetVFDCommBtnStat() | (byte)0x0C));
 
                 // Allow scheduled parameter list to be saved
                 msFile_SaveParamList.Enabled = true;
             }
             else
             {
-                // Turn off Modify VFD button by turning off bit 2
-                SetVFDCommBtnEnable((GetVFDCommBtnStat() & (byte)0xFB));
+                // Turn off Modify VFD and Verify BFD buttons by turning off bits 2 & 3
+                SetVFDCommBtnEnable((GetVFDCommBtnStat() & (byte)0xF3));
 
                 // Disable the save parameter list option if the list of modified parameter 
                 // list is 0
@@ -512,12 +418,12 @@ namespace V1000_Param_Prog
 
         #region Command Button Functions
 
-        private void SetVFDCommBtnEnable(bool p_ReadEn, bool p_InitEn, bool p_ModEnd, bool p_MonEn)
+        private void SetVFDCommBtnEnable(bool p_ReadEn, bool p_InitEn, bool p_ModEnd, bool p_VerEn)
         {
             btnVFDRead.Enabled = p_ReadEn;
             btnVFDReset.Enabled = p_InitEn;
             btnVFDMod.Enabled = p_ModEnd;
-            btnVFDMon.Enabled = p_MonEn;
+            btnVFDVer.Enabled = p_VerEn;
         }
 
         private void SetVFDCommBtnEnable(int p_Val)
@@ -538,9 +444,9 @@ namespace V1000_Param_Prog
                 btnVFDMod.Enabled = false;
 
             if ((p_Val & 0x0008) > 0)
-                btnVFDMon.Enabled = true;
+                btnVFDVer.Enabled = true;
             else
-                btnVFDMon.Enabled = false;
+                btnVFDVer.Enabled = false;
         }
 
         private int GetVFDCommBtnStat()
@@ -553,7 +459,7 @@ namespace V1000_Param_Prog
                 RetVal |= 0x0002;
             if (btnVFDMod.Enabled)
                 RetVal |= 0x0004;
-            if (btnVFDMon.Enabled)
+            if (btnVFDVer.Enabled)
                 RetVal |= 0x0008;
 
             return RetVal;
@@ -562,6 +468,7 @@ namespace V1000_Param_Prog
         #endregion
 
         #region VFD Parameter Read Functions
+
         private void btnReadVFD_Click(object sender, EventArgs e)
         {
             if (!bwrkReadVFDVals.IsBusy)
@@ -688,6 +595,41 @@ namespace V1000_Param_Prog
 
         }
         #endregion
+                
+        #region VFD Reset Drive Back to Their Default Settings
+
+        private void btnVFDReset_Click(object sender, EventArgs e)
+        {
+            V1000_ModbusRTU_Comm comm = new V1000_ModbusRTU_Comm();
+            ModbusRTUMsg msg = new ModbusRTUMsg(VFDSlaveAddr);
+            ModbusRTUMaster modbus = new ModbusRTUMaster();
+            List<ushort> val = new List<ushort>();
+
+            msg.Clear();
+            val.Clear();
+            val.Add(2220);
+            msg = modbus.CreateMessage(msg.SlaveAddr, ModbusRTUMaster.WriteReg, 0x0103, 1, val);
+
+            if (comm.OpenCommPort(ref spVFD) == 0x0001)
+            {
+                SetVFDCommBtnEnable(false, false, false, false);
+                int status = comm.DataTransfer(ref msg, ref spVFD);
+                if (status != 0x0001)
+                    MessageBox.Show("VFD Parameter Reset to Default Failure!!");
+                else
+                {
+                    // Reset was successful, close the communication port before proceeding.
+                    // The ReadVFD thread will handle its own needs for the comm port.
+                    comm.CloseCommPort(ref spVFD);
+
+                    // click the Read VFD button to refresh the datagridview for the full parameter 
+                    // list and clear the datagridview for the modified parameter list 
+                    btnReadVFD_Click(sender, e);
+                }
+            }
+        }
+
+        #endregion
 
         #region VFD Write Scheduled Parameter Changes
 
@@ -791,35 +733,21 @@ namespace V1000_Param_Prog
 
         #endregion
 
-        #region VFD Reset Drive Back to Their Default Settings
+        #region VFD Verify Parameter Settings
 
-        private void btnVFDReset_Click(object sender, EventArgs e)
+        private void btnVFDVer_Click(object sender, EventArgs e)
         {
-            V1000_ModbusRTU_Comm comm = new V1000_ModbusRTU_Comm();
-            ModbusRTUMsg msg = new ModbusRTUMsg(VFDSlaveAddr);
-            ModbusRTUMaster modbus = new ModbusRTUMaster();
-            List<ushort> val = new List<ushort>();
 
-            msg.Clear();
-            val.Clear();
-            val.Add(2220);
-            msg = modbus.CreateMessage(msg.SlaveAddr, ModbusRTUMaster.WriteReg, 0x0103, 1, val);
+        }
 
-            if (comm.OpenCommPort(ref spVFD) == 0x0001)
-            {
-                SetVFDCommBtnEnable(false, false, false, false);
-                int status = comm.DataTransfer(ref msg, ref spVFD);
-                if (status != 0x0001)
-                    MessageBox.Show("VFD Parameter Reset to Default Failure!!");
-                else
-                {
-                    // click the Read VFD button to refresh the datagridview for the full parameter 
-                    // list and clear the datagridview for the modified parameter list 
-                    btnReadVFD_Click(sender, e);
-                }
-                comm.CloseCommPort(ref spVFD);
-                SetVFDCommBtnEnable(true, true, true, true);
-            }
+        private void bwrkVFDVerify_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void bwrkVFDVerify_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
         }
 
         #endregion
@@ -876,47 +804,124 @@ namespace V1000_Param_Prog
             p_Data.DefVal = Convert.ToUInt16(p_dr[4].ToString());
         }
 
+        public void SetMachineParamNums(byte p_DriveType)
+        {
+            switch (p_DriveType)
+            {
+                case VFD_V1000:
+
+                    VoltSupplyParamNum = V1000_Param_Data.VoltSuppParam;
+                    VoltMaxOutParamNum = V1000_Param_Data.VoltMaxOutParam;
+                    FreqBaseParamNum = V1000_Param_Data.FreqBaseParam;
+                    RatedCurrParamNum = V1000_Param_Data.RatedCurrParam;
+                    break;
+            }
+        }
+
 
         #endregion
 
         #region Text Manipulation Functions
 
-        private Single CelltoSingle(string p_CellVal, V1000_Param_Data p_Param)
+        private Single Cell2Single(string p_CellVal, V1000_Param_Data p_Param)
         {
             Single RetVal = 0;
 
             
-                // First check if the default parameter is a hex value so we can trim off the "0x" from the beginning
-                if (p_Param.NumBase == 16)
+            // First check if the default parameter is a hex value so we can trim off the "0x" from the beginning
+            if (p_Param.NumBase == 16)
+            {
+                // Now check and see if the value is actually a hex value
+                if ((p_CellVal.IndexOf('x') > 0) || (p_CellVal.IndexOf('X') > 0))
                 {
-                    // Now check and see if the value is actually a hex value
-                    if ((p_CellVal.IndexOf('x') > 0) || (p_CellVal.IndexOf('X') > 0))
-                    {
-                        ushort temp_val = Convert.ToUInt16(p_CellVal.Substring(2), 16);
-                        RetVal = Convert.ToSingle(temp_val);
-                    }
-                    // If not just convert it to a single and treat it as a base 10 value
-                    else
-                        RetVal = Convert.ToSingle(p_CellVal);
+                    ushort temp_val = Convert.ToUInt16(p_CellVal.Substring(2), 16);
+                    RetVal = Convert.ToSingle(temp_val);
                 }
-                // Otherwise we need to trim off any units from the default cell value
+                // If not just convert it to a single and treat it as a base 10 value
                 else
-                {
-                    // Check and see if there is a space in the value that would indicate 
-                    // the presence of an appended unit such as "Hz" or "V" or "A"
-                    int unit_index = p_CellVal.IndexOf(' ');
-                    if (unit_index > 0)
-                    {
-                        p_CellVal = p_CellVal.Substring(0, unit_index);
-                        RetVal = Convert.ToSingle(p_CellVal);
-                    }
-                    // If there are no units then just convert the cell value to a single
-                    else
-                        RetVal = Convert.ToSingle(p_CellVal);
+                    RetVal = Convert.ToSingle(p_CellVal);
+            }
+            // Otherwise we need to trim off any units from the default cell value
+            else
+            {
+                RetVal = Cell2Single(p_CellVal);
+            }
 
-                }
             return RetVal;
         }
+
+        private Single Cell2Single(string p_CellVal)
+        {
+            Single RetVal = -1;
+
+            int unit_index = p_CellVal.IndexOf(' ');
+            if (unit_index > 0)
+            {
+                p_CellVal = p_CellVal.Substring(0, unit_index);
+                RetVal = Convert.ToSingle(p_CellVal);
+            }
+            // If there are no units then just convert the cell value to a single
+            else
+                RetVal = Convert.ToSingle(p_CellVal);
+
+            return RetVal;
+        }
+
+        private Double Cell2Double(string p_CellVal, V1000_Param_Data p_Param)
+        {
+            Double RetVal = 0;
+
+
+            // First check if the default parameter is a hex value so we can trim off the "0x" from the beginning
+            if (p_Param.NumBase == 16)
+            {
+                // Now check and see if the value is actually a hex value
+                if ((p_CellVal.IndexOf('x') > 0) || (p_CellVal.IndexOf('X') > 0))
+                {
+                    ushort temp_val = Convert.ToUInt16(p_CellVal.Substring(2), 16);
+                    RetVal = Convert.ToDouble(temp_val);
+                }
+                // If not just convert it to a single and treat it as a base 10 value
+                else
+                    RetVal = Convert.ToDouble(p_CellVal);
+            }
+            // Otherwise we need to trim off any units from the default cell value
+            else
+            {
+                RetVal = Cell2Double(p_CellVal);
+            }
+
+            return RetVal;
+        }
+
+        private Double Cell2Double(string p_CellVal)
+        {
+            Double RetVal = -1;
+
+            int unit_index = p_CellVal.IndexOf(' ');
+            if (unit_index > 0)
+            {
+                p_CellVal = p_CellVal.Substring(0, unit_index);
+                RetVal = Math.Round(Convert.ToDouble(p_CellVal), 2);
+            }
+            // If there are no units then just convert the cell value to a single
+            else
+                RetVal = Math.Round(Convert.ToDouble(p_CellVal), 2);
+
+            return RetVal;
+        }
+
+        private ushort Cell2RegVal(string p_CellVal, V1000_Param_Data p_Param)
+        {
+            double val;
+            ushort RegVal = 0;
+
+            val = Cell2Double(p_CellVal);
+            RegVal = (ushort)(val * p_Param.Multiplier);
+
+            return RegVal;
+        }
+
 
         private byte Hex2Byte(string p_CellVal)
         {
@@ -944,11 +949,32 @@ namespace V1000_Param_Prog
 
         #endregion
 
+        #region ToolStrip and Context Menu Functions
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        private void ctxtDriveMod_Opening(object sender, CancelEventArgs e)
+        {
+            if (Param_Mod.Count > 0)
+                ctxtSchedChng_Save.Enabled = true;
+            else
+                ctxtSchedChng_Save.Enabled = false;
+        }
+
+        private void ctxtSchedChng_Opening(object sender, CancelEventArgs e)
+        {
+            if (Param_Chng.Count > 0)
+                ctxtDriveMod_Save.Enabled = true;
+            else
+                ctxtDriveMod_Save.Enabled = false;
+        }
+
+        #endregion
+
+        #region Parameter File Reading and Writing Functions
         private void SaveParams(object sender, EventArgs e)
         {
             XL.Application xlApp = new XL.Application();
@@ -1068,25 +1094,69 @@ namespace V1000_Param_Prog
             }
         }
 
-        private void ctxtDriveMod_Opening(object sender, CancelEventArgs e)
+        #endregion
+
+        private void btnParamMachSet_Click(object sender, EventArgs e)
         {
-            if (Param_Mod.Count > 0)
-                ctxtSchedChng_Save.Enabled = true;
+            ushort volt_supply = 0, volt_out = 0, freq_base = 0, fla = 0;
+
+            if ((cmbVoltMachSupply.SelectedIndex == -1) || (cmbFreqMotorBase.SelectedIndex == -1) || (txtFLA.Text == ""))
+            {
+                MessageBox.Show("Machine supply voltage, supply frequency, and motor FLA must have valid entries!");
+                return;
+            }
+
+            // Get all the index values in the full parameter list for each of these parameters
+            int idx_volt_supply = GetParamIndex(VoltSupplyParamNum, Param_List);
+            int idx_volt_out = GetParamIndex(VoltMaxOutParamNum, Param_List);
+            int idx_freq_base = GetParamIndex(FreqBaseParamNum, Param_List);
+            int idx_fla = GetParamIndex(RatedCurrParamNum, Param_List);
+
+            if ((idx_volt_supply > 0) && (idx_volt_out > 0) && (idx_freq_base > 0) && (idx_fla > 0))
+            {
+                try
+                {
+                    volt_supply = Cell2RegVal((string)cmbVoltMachSupply.SelectedItem, Param_List[idx_volt_supply]);
+                    volt_out = Cell2RegVal((string)cmbVoltMotorMax.SelectedItem, Param_List[idx_volt_out]);
+                    freq_base = Cell2RegVal((string)cmbFreqMotorBase.SelectedItem, Param_List[idx_freq_base]);
+                    fla = Cell2RegVal(txtFLA.Text, Param_List[idx_fla]);
+                }
+                catch
+                {
+                    MessageBox.Show("Entry Error!!");
+                    return;
+                }
+
+                UpdateParamViews(volt_supply, idx_volt_supply); // Set supply voltage parameter
+                UpdateParamViews(volt_out, idx_volt_out);       // Set the maximum output voltage parameter
+                UpdateParamViews(freq_base, idx_freq_base);     // Set the base frequency parameter
+                UpdateParamViews(fla, idx_fla);                 // Set the motor rated current parameter
+            }
             else
-                ctxtSchedChng_Save.Enabled = false;
+            {
+                MessageBox.Show("Parameter Location Error!!");
+            }
         }
 
-        private void ctxtSchedChng_Opening(object sender, CancelEventArgs e)
+        private int GetParamIndex(string p_ParamNum, List<V1000_Param_Data> p_List)
         {
-            if (Param_Chng.Count > 0)
-                ctxtDriveMod_Save.Enabled = true;
-            else
-                ctxtDriveMod_Save.Enabled = false;
+            int Index = -1;
+
+            for (int i = 0; i < p_List.Count; i++)
+            {
+                if (p_List[i].ParamNum == p_ParamNum)
+                {
+                    Index = i;
+                    break;
+                }
+            }
+
+            return Index;
         }
 
-        private void dgvParamViewFull_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dgvParamViewChng_ColumnSortModeChanged(object sender, DataGridViewColumnEventArgs e)
         {
-            //dgvParamViewFull_CellEndEdit(sender, e);
+            
         }
     }
 
