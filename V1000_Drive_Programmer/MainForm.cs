@@ -250,7 +250,7 @@ namespace V1000_Param_Prog
                 dgvParamViewFull.Rows[i].Cells[4].ReadOnly = false;
             }
 
-            dgvParamViewMod.Rows.Clear();
+            dgvParamViewMisMatch.Rows.Clear();
         }
 
         private void cmbParamGroup_SelectedIndexChanged(object sender, EventArgs e)
@@ -544,7 +544,7 @@ namespace V1000_Param_Prog
                 VFDReadRegCnt = 0;
                 dgvParamViewFull.Columns[4].ReadOnly = true;
                 Param_Mod.Clear();
-                dgvParamViewMod.Rows.Clear();
+                dgvParamViewMisMatch.Rows.Clear();
                 ProgressArgs.ClearVFDReadVals();    // Initialize the progress flags for a VFD read
                 bwrkReadVFDVals.RunWorkerAsync();   // Start the separate thread for reading the current VFD parameter settings
 
@@ -553,6 +553,9 @@ namespace V1000_Param_Prog
                 statProgLabel.Visible = true;
                 statProgress.Visible = true;
 
+                lblParamMismatch.Text = "Drive Modified Parameters:";
+                cmMisMatchDefVal.HeaderText = "Default Value";
+                
                 // disable the VFD communication buttons while a read is in progress.
                 SetVFDCommBtnEnable(false, false, false, false);
             }
@@ -604,11 +607,6 @@ namespace V1000_Param_Prog
             }
         }
 
-        private void bwrkDGV_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            statProgress.Value = e.ProgressPercentage;
-        }
-
         private void bwrkReadVFDVals_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // First check and see if there was any data received to even process
@@ -633,7 +631,7 @@ namespace V1000_Param_Prog
                         ClonedRow.DefaultCellStyle.BackColor = Color.White; // don't want a custom color row for this datagridview
                         for (int j = 0; j < dgvParamViewFull.ColumnCount; j++)
                             ClonedRow.Cells[j].Value = dgvParamViewFull.Rows[i].Cells[j].Value;
-                        dgvParamViewMod.Rows.Add(ClonedRow);
+                        dgvParamViewMisMatch.Rows.Add(ClonedRow);
 
                         // Turn the VFD Parameter Values datagridview row with the non-default parameter yellow to signify 
                         // that the particular parameter is set to a non-default value
@@ -807,14 +805,19 @@ namespace V1000_Param_Prog
         {
             if (!bwrkVFDVerify.IsBusy)
             {
+                Param_Vrfy.Clear();
                 ProgressArgs.ClearVFDVerVals();
                 ProgressArgs.VFDVer_Stat = ThreadProgressArgs.Stat_Running;
                 bwrkVFDVerify.RunWorkerAsync();
 
                 // Configure status bar for displaying VFD modified parameter verification progress
-                statProgLabel.Text = "VFD Parameter Modified Parameter Setting Progress: ";
+                statProgLabel.Text = "VFD Parameter Parameter Setting Verification Progress: ";
                 statProgLabel.Visible = true;
                 statProgress.Visible = true;
+
+                lblParamMismatch.Text = "Drive Mismatched Parameter Values";
+                cmMisMatchDefVal.HeaderText = "Specified Value";
+                
 
                 btnVFDVer.Enabled = false; // disable the Modify VFD button while a write is in progress.
             }
@@ -831,13 +834,13 @@ namespace V1000_Param_Prog
             // proceed further only if opening of communication port is successful
             if (comm.OpenCommPort(ref spVFD) == 0x0001)
             {
-                ProgressArgs.VFDVer_Total_Units = Param_Chng.Count;
+                ProgressArgs.VFDVer_Total_Units = Param_List.Count;
 
                 for (int i = 0; i < ProgressArgs.VFDVer_Total_Units; i++)
                 {
                     ProgressArgs.VFDVer_Unit = i;
                     ProgressArgs.VFDVer_Progress = (byte)(((float)i / ProgressArgs.VFDVer_Total_Units) * 100);
-                    bwrkVFDVerify.ReportProgress(ProgressArgs.VFDWrite_Progress);
+                    bwrkVFDVerify.ReportProgress(ProgressArgs.VFDVer_Progress);
                     if (bwrkVFDVerify.CancellationPending)
                     {
                         e.Cancel = true;
@@ -854,14 +857,17 @@ namespace V1000_Param_Prog
                     status = comm.DataTransfer(ref msg, ref spVFD);
                     if (status != 0x0001)
                     {
-                        MessageBox.Show("VFD Parameter Update Failure!!");
+                        MessageBox.Show("VFD Parameter Verification Failed!!");
                         e.Cancel = true;
-                        ProgressArgs.VFDWrite_Stat = ThreadProgressArgs.Stat_Error;
+                        ProgressArgs.VFDVer_Stat = ThreadProgressArgs.Stat_Error;
                         bwrkVFDVerify.ReportProgress(0);
                         break;
                     }
-                    else if (msg.Data[0] != Param_List[i].ParamVal)
-                        ProgressArgs.VFDVer_ParamMismatch_Cnt++;
+                    else
+                    {
+                        Param_Vrfy.Add((V1000_Param_Data)Param_List[i].Clone());
+                        Param_Vrfy[i].ParamVal = msg.Data[0];
+                    }
                 }
 
 
@@ -886,12 +892,48 @@ namespace V1000_Param_Prog
 
             btnVFDVer.Enabled = true; // re-enable the VFD read button
 
-            if (ProgressArgs.VFDWrite_Stat == ThreadProgressArgs.Stat_Complete)
+            if (ProgressArgs.VFDVer_Stat == ThreadProgressArgs.Stat_Complete)
             {
-                if (ProgressArgs.VFDVer_ParamMismatch_Cnt == 0)
-                    MessageBox.Show("VFD Programming Verification Complete, Drive Parameters Match Loaded Settings!");
+                // First make an exact copy of the master parameter list and then alter the 
+                // parameter values of the ones that we are verifying should have been modified. 
+                List<V1000_Param_Data> param_chk = new List<V1000_Param_Data>();
+                for (int i = 0; i < Param_List.Count; i++)
+                    param_chk.Add((V1000_Param_Data)Param_List[i].Clone());
+
+                for (int i = 0; i < Param_Chng.Count; i++)
+                {
+                    int idx = GetParamIndex(Param_Chng[i].RegAddress, Param_List);
+                    param_chk[i].ParamVal = Param_Chng[i].ParamVal;
+                }
+
+                if (param_chk.Count != Param_Vrfy.Count)
+                    MessageBox.Show("Parameter verification failed! Number of parameters read from drive does not match total number of parameters!");
                 else
-                    MessageBox.Show("VFD Programming Verification Failure! A total of " + ProgressArgs.VFDVer_ParamMismatch_Cnt.ToString() + "Parameters Did Not Match the Loaded Settings!");
+                {
+                    for (int i = 0; i < param_chk.Count; i++)
+                    {
+                        if (Param_Vrfy[i].ParamVal != param_chk[i].ParamVal)
+                        {
+                            // Clone the row with the parameter that differs from the default value and add it to 
+                            // the Datagridview for modified parameters. 
+                            DataGridViewRow ClonedRow = (DataGridViewRow)dgvParamViewFull.Rows[i].Clone();
+                            ClonedRow.DefaultCellStyle.BackColor = Color.White; // don't want a custom color row for this datagridview
+                            for (int j = 0; j < dgvParamViewFull.ColumnCount; j++)
+                                ClonedRow.Cells[j].Value = dgvParamViewFull.Rows[i].Cells[j].Value;
+                            ClonedRow.Cells[3].Value = param_chk[i].ParamVal;
+                            ClonedRow.Cells[4].Value = Param_Vrfy[i].ParamVal;
+                            dgvParamViewMisMatch.Rows.Add(ClonedRow);
+
+                            ProgressArgs.VFDVer_ParamMismatch_Cnt++;
+                        }
+                    }
+
+                    if (ProgressArgs.VFDVer_ParamMismatch_Cnt > 0)
+                        MessageBox.Show("VFD parameter setting verification failed!. See mismatch parameter list for details.");
+                    else
+                        MessageBox.Show("VFD parameter setting verification successful!");
+                }
+
             }
         }
 
@@ -1336,6 +1378,11 @@ namespace V1000_Param_Prog
             }
 
             return Index;
+        }
+
+        private void bwrkDGV_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            statProgress.Value = e.ProgressPercentage;
         }
     }
 

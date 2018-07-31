@@ -99,13 +99,13 @@
             this.cmbVoltMachSupply = new System.Windows.Forms.ComboBox();
             this.lblVoltMotorMax = new System.Windows.Forms.Label();
             this.cmbVoltMotorMax = new System.Windows.Forms.ComboBox();
-            this.dgvParamViewMod = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label1 = new System.Windows.Forms.Label();
+            this.dgvParamViewMisMatch = new System.Windows.Forms.DataGridView();
+            this.cmMisMatchParamAddr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmMisMatchParamNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmMisMatchParamName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmMisMatchDefVal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmMisMatchReadVal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblParamMismatch = new System.Windows.Forms.Label();
             this.lblFreqMotorBase = new System.Windows.Forms.Label();
             this.cmbFreqMotorBase = new System.Windows.Forms.ComboBox();
             this.lblFLA = new System.Windows.Forms.Label();
@@ -123,7 +123,7 @@
             this.groupBox4.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMod)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMisMatch)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -633,11 +633,11 @@
             // 
             // dataGridViewTextBoxColumn5
             // 
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "VFDVal";
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "SpecVal";
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle10;
-            this.dataGridViewTextBoxColumn5.HeaderText = "VFD Value";
+            this.dataGridViewTextBoxColumn5.HeaderText = "Specified Value";
             this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
             this.dataGridViewTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -718,93 +718,93 @@
             this.cmbVoltMotorMax.TabIndex = 52;
             this.cmbVoltMotorMax.SelectedIndexChanged += new System.EventHandler(this.cmbVoltMotorMax_SelectedIndexChanged);
             // 
-            // dgvParamViewMod
+            // dgvParamViewMisMatch
             // 
-            this.dgvParamViewMod.AllowUserToAddRows = false;
-            this.dgvParamViewMod.AllowUserToDeleteRows = false;
-            this.dgvParamViewMod.AllowUserToResizeColumns = false;
-            this.dgvParamViewMod.AllowUserToResizeRows = false;
-            this.dgvParamViewMod.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvParamViewMod.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn6,
-            this.dataGridViewTextBoxColumn7,
-            this.dataGridViewTextBoxColumn8,
-            this.dataGridViewTextBoxColumn9,
-            this.dataGridViewTextBoxColumn10});
-            this.dgvParamViewMod.ContextMenuStrip = this.ctxtDriveMod;
-            this.dgvParamViewMod.Location = new System.Drawing.Point(5, 454);
-            this.dgvParamViewMod.Name = "dgvParamViewMod";
-            this.dgvParamViewMod.RowHeadersVisible = false;
-            this.dgvParamViewMod.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvParamViewMod.Size = new System.Drawing.Size(600, 305);
-            this.dgvParamViewMod.TabIndex = 41;
-            this.dgvParamViewMod.TabStop = false;
+            this.dgvParamViewMisMatch.AllowUserToAddRows = false;
+            this.dgvParamViewMisMatch.AllowUserToDeleteRows = false;
+            this.dgvParamViewMisMatch.AllowUserToResizeColumns = false;
+            this.dgvParamViewMisMatch.AllowUserToResizeRows = false;
+            this.dgvParamViewMisMatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvParamViewMisMatch.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.cmMisMatchParamAddr,
+            this.cmMisMatchParamNum,
+            this.cmMisMatchParamName,
+            this.cmMisMatchDefVal,
+            this.cmMisMatchReadVal});
+            this.dgvParamViewMisMatch.ContextMenuStrip = this.ctxtDriveMod;
+            this.dgvParamViewMisMatch.Location = new System.Drawing.Point(5, 454);
+            this.dgvParamViewMisMatch.Name = "dgvParamViewMisMatch";
+            this.dgvParamViewMisMatch.RowHeadersVisible = false;
+            this.dgvParamViewMisMatch.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvParamViewMisMatch.Size = new System.Drawing.Size(600, 305);
+            this.dgvParamViewMisMatch.TabIndex = 41;
+            this.dgvParamViewMisMatch.TabStop = false;
             // 
-            // dataGridViewTextBoxColumn6
+            // cmMisMatchParamAddr
             // 
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "RegAddress";
+            this.cmMisMatchParamAddr.DataPropertyName = "RegAddress";
             dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle11;
-            this.dataGridViewTextBoxColumn6.HeaderText = "Parameter Address";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.ReadOnly = true;
-            this.dataGridViewTextBoxColumn6.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewTextBoxColumn6.Width = 60;
+            this.cmMisMatchParamAddr.DefaultCellStyle = dataGridViewCellStyle11;
+            this.cmMisMatchParamAddr.HeaderText = "Parameter Address";
+            this.cmMisMatchParamAddr.Name = "cmMisMatchParamAddr";
+            this.cmMisMatchParamAddr.ReadOnly = true;
+            this.cmMisMatchParamAddr.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.cmMisMatchParamAddr.Width = 60;
             // 
-            // dataGridViewTextBoxColumn7
+            // cmMisMatchParamNum
             // 
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "ParamNum";
+            this.cmMisMatchParamNum.DataPropertyName = "ParamNum";
             dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle12;
-            this.dataGridViewTextBoxColumn7.HeaderText = "Parameter Number";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.ReadOnly = true;
-            this.dataGridViewTextBoxColumn7.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewTextBoxColumn7.Width = 60;
+            this.cmMisMatchParamNum.DefaultCellStyle = dataGridViewCellStyle12;
+            this.cmMisMatchParamNum.HeaderText = "Parameter Number";
+            this.cmMisMatchParamNum.Name = "cmMisMatchParamNum";
+            this.cmMisMatchParamNum.ReadOnly = true;
+            this.cmMisMatchParamNum.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.cmMisMatchParamNum.Width = 60;
             // 
-            // dataGridViewTextBoxColumn8
+            // cmMisMatchParamName
             // 
-            this.dataGridViewTextBoxColumn8.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn8.DataPropertyName = "ParamName";
+            this.cmMisMatchParamName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cmMisMatchParamName.DataPropertyName = "ParamName";
             dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.dataGridViewTextBoxColumn8.DefaultCellStyle = dataGridViewCellStyle13;
-            this.dataGridViewTextBoxColumn8.HeaderText = "Parameter Name";
-            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            this.dataGridViewTextBoxColumn8.ReadOnly = true;
+            this.cmMisMatchParamName.DefaultCellStyle = dataGridViewCellStyle13;
+            this.cmMisMatchParamName.HeaderText = "Parameter Name";
+            this.cmMisMatchParamName.Name = "cmMisMatchParamName";
+            this.cmMisMatchParamName.ReadOnly = true;
             // 
-            // dataGridViewTextBoxColumn9
+            // cmMisMatchDefVal
             // 
-            this.dataGridViewTextBoxColumn9.DataPropertyName = "DefVal";
+            this.cmMisMatchDefVal.DataPropertyName = "DefVal";
             dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn9.DefaultCellStyle = dataGridViewCellStyle14;
-            this.dataGridViewTextBoxColumn9.HeaderText = "Default Value";
-            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            this.dataGridViewTextBoxColumn9.ReadOnly = true;
-            this.dataGridViewTextBoxColumn9.Width = 70;
+            this.cmMisMatchDefVal.DefaultCellStyle = dataGridViewCellStyle14;
+            this.cmMisMatchDefVal.HeaderText = "Default Value";
+            this.cmMisMatchDefVal.Name = "cmMisMatchDefVal";
+            this.cmMisMatchDefVal.ReadOnly = true;
+            this.cmMisMatchDefVal.Width = 70;
             // 
-            // dataGridViewTextBoxColumn10
+            // cmMisMatchReadVal
             // 
-            this.dataGridViewTextBoxColumn10.DataPropertyName = "VFDVal";
+            this.cmMisMatchReadVal.DataPropertyName = "ReadVal";
             dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn10.DefaultCellStyle = dataGridViewCellStyle15;
-            this.dataGridViewTextBoxColumn10.HeaderText = "VFD Value";
-            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
-            this.dataGridViewTextBoxColumn10.ReadOnly = true;
-            this.dataGridViewTextBoxColumn10.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewTextBoxColumn10.Width = 70;
+            this.cmMisMatchReadVal.DefaultCellStyle = dataGridViewCellStyle15;
+            this.cmMisMatchReadVal.HeaderText = "Read Value";
+            this.cmMisMatchReadVal.Name = "cmMisMatchReadVal";
+            this.cmMisMatchReadVal.ReadOnly = true;
+            this.cmMisMatchReadVal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.cmMisMatchReadVal.Width = 70;
             // 
-            // label1
+            // lblParamMismatch
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 438);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 13);
-            this.label1.TabIndex = 46;
-            this.label1.Text = "Drive Modified Parameters:";
+            this.lblParamMismatch.AutoSize = true;
+            this.lblParamMismatch.Location = new System.Drawing.Point(2, 438);
+            this.lblParamMismatch.Name = "lblParamMismatch";
+            this.lblParamMismatch.Size = new System.Drawing.Size(134, 13);
+            this.lblParamMismatch.TabIndex = 46;
+            this.lblParamMismatch.Text = "Drive Modified Parameters:";
             // 
             // lblFreqMotorBase
             // 
@@ -873,8 +873,8 @@
             this.groupBox3.Controls.Add(this.lblFLA);
             this.groupBox3.Controls.Add(this.cmbFreqMotorBase);
             this.groupBox3.Controls.Add(this.lblFreqMotorBase);
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.dgvParamViewMod);
+            this.groupBox3.Controls.Add(this.lblParamMismatch);
+            this.groupBox3.Controls.Add(this.dgvParamViewMisMatch);
             this.groupBox3.Controls.Add(this.cmbVoltMotorMax);
             this.groupBox3.Controls.Add(this.lblVoltMotorMax);
             this.groupBox3.Controls.Add(this.cmbVoltMachSupply);
@@ -927,7 +927,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMod)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewMisMatch)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
@@ -979,13 +979,8 @@
         private System.Windows.Forms.ComboBox cmbVoltMachSupply;
         private System.Windows.Forms.Label lblVoltMotorMax;
         private System.Windows.Forms.ComboBox cmbVoltMotorMax;
-        private System.Windows.Forms.DataGridView dgvParamViewMod;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataGridView dgvParamViewMisMatch;
+        private System.Windows.Forms.Label lblParamMismatch;
         private System.Windows.Forms.Label lblFreqMotorBase;
         private System.Windows.Forms.ComboBox cmbFreqMotorBase;
         private System.Windows.Forms.Label lblFLA;
@@ -999,13 +994,18 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cmDefVal;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmVFDVal;
         private System.ComponentModel.BackgroundWorker bwrkVFDVerify;
+        private System.Windows.Forms.Label lblDriveDuty;
+        private System.Windows.Forms.ComboBox cmbDriveDuty;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cmMisMatchParamAddr;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cmMisMatchParamNum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cmMisMatchParamName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cmMisMatchDefVal;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cmMisMatchReadVal;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private System.Windows.Forms.Label lblDriveDuty;
-        private System.Windows.Forms.ComboBox cmbDriveDuty;
     }
 }
 
