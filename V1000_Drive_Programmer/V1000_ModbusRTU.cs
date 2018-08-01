@@ -186,10 +186,18 @@ namespace V1000_ModbusRTU
         public byte   NumBase;
         public string Units;
 
-        public const string VoltSuppParam = "E1-01";
+        public const ushort AccLvlReg = 0x101;
+        public const ushort AccLvlOpOnly = 0x0000;
+
+        public const ushort RegCtrlMethod = 0x0103;
+
+        public const ushort FreqRefRngLow = 0x0280;
+        public const ushort FreqRefRngHi = 0x0293;
+
+        public const string VoltSuppParam   = "E1-01";
         public const string VoltMaxOutParam = "E1-05";
-        public const string FreqBaseParam = "E1-06";
-        public const string RatedCurrParam = "E2-01";
+        public const string FreqBaseParam   = "E1-06";
+        public const string RatedCurrParam  = "E2-01";
 
         private ushort _DefVal;
         private ushort _ParamVal;
