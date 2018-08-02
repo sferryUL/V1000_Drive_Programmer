@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtSlaveAddr = new System.Windows.Forms.TextBox();
             this.lblSlaveAddr = new System.Windows.Forms.Label();
             this.grpCommSettings = new System.Windows.Forms.GroupBox();
@@ -114,7 +114,7 @@
             this.lblUnitsAmps1 = new System.Windows.Forms.Label();
             this.txtFLA = new System.Windows.Forms.TextBox();
             this.btnParamMachSet = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grpParamChng = new System.Windows.Forms.GroupBox();
             this.cmbFreqMach = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbMotorPartNum = new System.Windows.Forms.ComboBox();
@@ -124,6 +124,7 @@
             this.lblSelMach = new System.Windows.Forms.Label();
             this.lblSelMotor = new System.Windows.Forms.Label();
             this.bwrkVFDVerify = new System.ComponentModel.BackgroundWorker();
+            this.grpSetMach = new System.Windows.Forms.GroupBox();
             this.grpCommSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewFull)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -134,7 +135,8 @@
             this.groupBox4.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.grpParamChng.SuspendLayout();
+            this.grpSetMach.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtSlaveAddr
@@ -224,9 +226,9 @@
             // cmRegAddr
             // 
             this.cmRegAddr.DataPropertyName = "RegAddress";
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmRegAddr.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmRegAddr.DefaultCellStyle = dataGridViewCellStyle1;
             this.cmRegAddr.HeaderText = "Parameter Address";
             this.cmRegAddr.Name = "cmRegAddr";
             this.cmRegAddr.ReadOnly = true;
@@ -237,9 +239,9 @@
             // cmParamNum
             // 
             this.cmParamNum.DataPropertyName = "ParamNum";
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmParamNum.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmParamNum.DefaultCellStyle = dataGridViewCellStyle2;
             this.cmParamNum.HeaderText = "Parameter Number";
             this.cmParamNum.Name = "cmParamNum";
             this.cmParamNum.ReadOnly = true;
@@ -251,8 +253,8 @@
             // 
             this.cmParmName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cmParmName.DataPropertyName = "ParamName";
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.cmParmName.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.cmParmName.DefaultCellStyle = dataGridViewCellStyle3;
             this.cmParmName.HeaderText = "Parameter Name";
             this.cmParmName.Name = "cmParmName";
             this.cmParmName.ReadOnly = true;
@@ -261,9 +263,9 @@
             // cmDefVal
             // 
             this.cmDefVal.DataPropertyName = "DefVal";
-            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmDefVal.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmDefVal.DefaultCellStyle = dataGridViewCellStyle4;
             this.cmDefVal.HeaderText = "Default Value";
             this.cmDefVal.Name = "cmDefVal";
             this.cmDefVal.ReadOnly = true;
@@ -273,9 +275,9 @@
             // cmVFDVal
             // 
             this.cmVFDVal.DataPropertyName = "VFDVal";
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmVFDVal.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmVFDVal.DefaultCellStyle = dataGridViewCellStyle5;
             this.cmVFDVal.HeaderText = "VFD Value";
             this.cmVFDVal.Name = "cmVFDVal";
             this.cmVFDVal.ReadOnly = true;
@@ -332,27 +334,27 @@
             this.ctxtSchedChng_Save,
             this.ctxtSchedChng_Clear});
             this.ctxtSchedChng.Name = "ctxtSchedChng";
-            this.ctxtSchedChng.Size = new System.Drawing.Size(181, 92);
+            this.ctxtSchedChng.Size = new System.Drawing.Size(167, 70);
             this.ctxtSchedChng.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtSchedChng_Opening);
             // 
             // ctxtSchedChng_Load
             // 
             this.ctxtSchedChng_Load.Name = "ctxtSchedChng_Load";
-            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(180, 22);
+            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(166, 22);
             this.ctxtSchedChng_Load.Text = "Load Change List";
             this.ctxtSchedChng_Load.Click += new System.EventHandler(this.LoadParams);
             // 
             // ctxtSchedChng_Save
             // 
             this.ctxtSchedChng_Save.Name = "ctxtSchedChng_Save";
-            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(180, 22);
+            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(166, 22);
             this.ctxtSchedChng_Save.Text = "Save Change List";
             this.ctxtSchedChng_Save.Click += new System.EventHandler(this.SaveParams);
             // 
             // ctxtSchedChng_Clear
             // 
             this.ctxtSchedChng_Clear.Name = "ctxtSchedChng_Clear";
-            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(180, 22);
+            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(166, 22);
             this.ctxtSchedChng_Clear.Text = "Clear Change List";
             this.ctxtSchedChng_Clear.Click += new System.EventHandler(this.clearScheduledChangesToolStripMenuItem_Click);
             // 
@@ -512,9 +514,9 @@
             // cmMisMatchParamAddr
             // 
             this.cmMisMatchParamAddr.DataPropertyName = "RegAddress";
-            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmMisMatchParamAddr.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmMisMatchParamAddr.DefaultCellStyle = dataGridViewCellStyle6;
             this.cmMisMatchParamAddr.HeaderText = "Parameter Address";
             this.cmMisMatchParamAddr.Name = "cmMisMatchParamAddr";
             this.cmMisMatchParamAddr.ReadOnly = true;
@@ -524,9 +526,9 @@
             // cmMisMatchParamNum
             // 
             this.cmMisMatchParamNum.DataPropertyName = "ParamNum";
-            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmMisMatchParamNum.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmMisMatchParamNum.DefaultCellStyle = dataGridViewCellStyle7;
             this.cmMisMatchParamNum.HeaderText = "Parameter Number";
             this.cmMisMatchParamNum.Name = "cmMisMatchParamNum";
             this.cmMisMatchParamNum.ReadOnly = true;
@@ -537,8 +539,8 @@
             // 
             this.cmMisMatchParamName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cmMisMatchParamName.DataPropertyName = "ParamName";
-            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.cmMisMatchParamName.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.cmMisMatchParamName.DefaultCellStyle = dataGridViewCellStyle8;
             this.cmMisMatchParamName.HeaderText = "Parameter Name";
             this.cmMisMatchParamName.Name = "cmMisMatchParamName";
             this.cmMisMatchParamName.ReadOnly = true;
@@ -546,9 +548,9 @@
             // cmMisMatchDefVal
             // 
             this.cmMisMatchDefVal.DataPropertyName = "DefVal";
-            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmMisMatchDefVal.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmMisMatchDefVal.DefaultCellStyle = dataGridViewCellStyle9;
             this.cmMisMatchDefVal.HeaderText = "Default Value";
             this.cmMisMatchDefVal.Name = "cmMisMatchDefVal";
             this.cmMisMatchDefVal.ReadOnly = true;
@@ -557,9 +559,9 @@
             // cmMisMatchReadVal
             // 
             this.cmMisMatchReadVal.DataPropertyName = "ReadVal";
-            dataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle25.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.cmMisMatchReadVal.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmMisMatchReadVal.DefaultCellStyle = dataGridViewCellStyle10;
             this.cmMisMatchReadVal.HeaderText = "Read Value";
             this.cmMisMatchReadVal.Name = "cmMisMatchReadVal";
             this.cmMisMatchReadVal.ReadOnly = true;
@@ -668,7 +670,7 @@
             // lblParamModSched
             // 
             this.lblParamModSched.AutoSize = true;
-            this.lblParamModSched.Location = new System.Drawing.Point(6, 196);
+            this.lblParamModSched.Location = new System.Drawing.Point(6, 28);
             this.lblParamModSched.Name = "lblParamModSched";
             this.lblParamModSched.Size = new System.Drawing.Size(106, 13);
             this.lblParamModSched.TabIndex = 43;
@@ -688,20 +690,20 @@
             this.dataGridViewTextBoxColumn4,
             this.dataGridViewTextBoxColumn5});
             this.dgvParamViewChng.ContextMenuStrip = this.ctxtSchedChng;
-            this.dgvParamViewChng.Location = new System.Drawing.Point(6, 219);
+            this.dgvParamViewChng.Location = new System.Drawing.Point(6, 51);
             this.dgvParamViewChng.Name = "dgvParamViewChng";
             this.dgvParamViewChng.RowHeadersVisible = false;
             this.dgvParamViewChng.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvParamViewChng.Size = new System.Drawing.Size(600, 558);
+            this.dgvParamViewChng.Size = new System.Drawing.Size(600, 726);
             this.dgvParamViewChng.TabIndex = 40;
             this.dgvParamViewChng.TabStop = false;
             // 
             // dataGridViewTextBoxColumn1
             // 
             this.dataGridViewTextBoxColumn1.DataPropertyName = "RegAddress";
-            dataGridViewCellStyle26.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle26.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle11;
             this.dataGridViewTextBoxColumn1.HeaderText = "Parameter Address";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.ReadOnly = true;
@@ -712,9 +714,9 @@
             // dataGridViewTextBoxColumn2
             // 
             this.dataGridViewTextBoxColumn2.DataPropertyName = "ParamNum";
-            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle27.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle12;
             this.dataGridViewTextBoxColumn2.HeaderText = "Parameter Number";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.ReadOnly = true;
@@ -726,8 +728,8 @@
             // 
             this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn3.DataPropertyName = "ParamName";
-            dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle13;
             this.dataGridViewTextBoxColumn3.HeaderText = "Parameter Name";
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             this.dataGridViewTextBoxColumn3.ReadOnly = true;
@@ -736,9 +738,9 @@
             // dataGridViewTextBoxColumn4
             // 
             this.dataGridViewTextBoxColumn4.DataPropertyName = "DefVal";
-            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle29;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle14;
             this.dataGridViewTextBoxColumn4.HeaderText = "Default Value";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             this.dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -748,9 +750,9 @@
             // dataGridViewTextBoxColumn5
             // 
             this.dataGridViewTextBoxColumn5.DataPropertyName = "SpecVal";
-            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle30;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle15;
             this.dataGridViewTextBoxColumn5.HeaderText = "Specified Value";
             this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
             this.dataGridViewTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -760,7 +762,7 @@
             // lblParamChngSrc
             // 
             this.lblParamChngSrc.AutoSize = true;
-            this.lblParamChngSrc.Location = new System.Drawing.Point(461, 196);
+            this.lblParamChngSrc.Location = new System.Drawing.Point(461, 28);
             this.lblParamChngSrc.Name = "lblParamChngSrc";
             this.lblParamChngSrc.Size = new System.Drawing.Size(44, 13);
             this.lblParamChngSrc.TabIndex = 44;
@@ -768,7 +770,7 @@
             // 
             // txtParamChngSrc
             // 
-            this.txtParamChngSrc.Location = new System.Drawing.Point(511, 193);
+            this.txtParamChngSrc.Location = new System.Drawing.Point(511, 25);
             this.txtParamChngSrc.Name = "txtParamChngSrc";
             this.txtParamChngSrc.ReadOnly = true;
             this.txtParamChngSrc.Size = new System.Drawing.Size(97, 20);
@@ -777,7 +779,7 @@
             // lblVoltMachSupply
             // 
             this.lblVoltMachSupply.AutoSize = true;
-            this.lblVoltMachSupply.Location = new System.Drawing.Point(20, 50);
+            this.lblVoltMachSupply.Location = new System.Drawing.Point(20, 44);
             this.lblVoltMachSupply.Name = "lblVoltMachSupply";
             this.lblVoltMachSupply.Size = new System.Drawing.Size(125, 13);
             this.lblVoltMachSupply.TabIndex = 47;
@@ -786,7 +788,6 @@
             // cmbVoltMach
             // 
             this.cmbVoltMach.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVoltMach.Enabled = false;
             this.cmbVoltMach.FormattingEnabled = true;
             this.cmbVoltMach.Items.AddRange(new object[] {
             "208 V",
@@ -797,7 +798,7 @@
             "400 V",
             "415 V",
             "460 V"});
-            this.cmbVoltMach.Location = new System.Drawing.Point(151, 46);
+            this.cmbVoltMach.Location = new System.Drawing.Point(151, 40);
             this.cmbVoltMach.Name = "cmbVoltMach";
             this.cmbVoltMach.Size = new System.Drawing.Size(105, 21);
             this.cmbVoltMach.TabIndex = 50;
@@ -806,7 +807,7 @@
             // lblVoltMotorMax
             // 
             this.lblVoltMotorMax.AutoSize = true;
-            this.lblVoltMotorMax.Location = new System.Drawing.Point(349, 76);
+            this.lblVoltMotorMax.Location = new System.Drawing.Point(349, 70);
             this.lblVoltMotorMax.Name = "lblVoltMotorMax";
             this.lblVoltMotorMax.Size = new System.Drawing.Size(123, 13);
             this.lblVoltMotorMax.TabIndex = 51;
@@ -815,7 +816,6 @@
             // cmbVoltMotorMax
             // 
             this.cmbVoltMotorMax.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVoltMotorMax.Enabled = false;
             this.cmbVoltMotorMax.FormattingEnabled = true;
             this.cmbVoltMotorMax.Items.AddRange(new object[] {
             "208 V",
@@ -826,7 +826,7 @@
             "400 V",
             "415 V",
             "460 V"});
-            this.cmbVoltMotorMax.Location = new System.Drawing.Point(478, 72);
+            this.cmbVoltMotorMax.Location = new System.Drawing.Point(478, 66);
             this.cmbVoltMotorMax.Name = "cmbVoltMotorMax";
             this.cmbVoltMotorMax.Size = new System.Drawing.Size(130, 21);
             this.cmbVoltMotorMax.TabIndex = 52;
@@ -835,7 +835,7 @@
             // lblFreqMotorBase
             // 
             this.lblFreqMotorBase.AutoSize = true;
-            this.lblFreqMotorBase.Location = new System.Drawing.Point(355, 102);
+            this.lblFreqMotorBase.Location = new System.Drawing.Point(28, 97);
             this.lblFreqMotorBase.Name = "lblFreqMotorBase";
             this.lblFreqMotorBase.Size = new System.Drawing.Size(117, 13);
             this.lblFreqMotorBase.TabIndex = 55;
@@ -844,20 +844,19 @@
             // cmbFreqMotorBase
             // 
             this.cmbFreqMotorBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFreqMotorBase.Enabled = false;
             this.cmbFreqMotorBase.FormattingEnabled = true;
             this.cmbFreqMotorBase.Items.AddRange(new object[] {
             "50 Hz",
             "60 Hz"});
-            this.cmbFreqMotorBase.Location = new System.Drawing.Point(478, 99);
+            this.cmbFreqMotorBase.Location = new System.Drawing.Point(151, 94);
             this.cmbFreqMotorBase.Name = "cmbFreqMotorBase";
-            this.cmbFreqMotorBase.Size = new System.Drawing.Size(130, 21);
+            this.cmbFreqMotorBase.Size = new System.Drawing.Size(105, 21);
             this.cmbFreqMotorBase.TabIndex = 56;
             // 
             // lblFLA
             // 
             this.lblFLA.AutoSize = true;
-            this.lblFLA.Location = new System.Drawing.Point(413, 129);
+            this.lblFLA.Location = new System.Drawing.Point(413, 96);
             this.lblFLA.Name = "lblFLA";
             this.lblFLA.Size = new System.Drawing.Size(59, 13);
             this.lblFLA.TabIndex = 57;
@@ -866,7 +865,7 @@
             // lblUnitsAmps1
             // 
             this.lblUnitsAmps1.AutoSize = true;
-            this.lblUnitsAmps1.Location = new System.Drawing.Point(594, 129);
+            this.lblUnitsAmps1.Location = new System.Drawing.Point(594, 96);
             this.lblUnitsAmps1.Name = "lblUnitsAmps1";
             this.lblUnitsAmps1.Size = new System.Drawing.Size(14, 13);
             this.lblUnitsAmps1.TabIndex = 58;
@@ -874,16 +873,14 @@
             // 
             // txtFLA
             // 
-            this.txtFLA.Enabled = false;
-            this.txtFLA.Location = new System.Drawing.Point(478, 126);
+            this.txtFLA.Location = new System.Drawing.Point(478, 93);
             this.txtFLA.Name = "txtFLA";
             this.txtFLA.Size = new System.Drawing.Size(110, 20);
             this.txtFLA.TabIndex = 59;
             // 
             // btnParamMachSet
             // 
-            this.btnParamMachSet.Enabled = false;
-            this.btnParamMachSet.Location = new System.Drawing.Point(478, 152);
+            this.btnParamMachSet.Location = new System.Drawing.Point(476, 128);
             this.btnParamMachSet.Name = "btnParamMachSet";
             this.btnParamMachSet.Size = new System.Drawing.Size(130, 23);
             this.btnParamMachSet.TabIndex = 60;
@@ -891,52 +888,27 @@
             this.btnParamMachSet.UseVisualStyleBackColor = true;
             this.btnParamMachSet.Click += new System.EventHandler(this.btnSetMotorVals);
             // 
-            // groupBox3
+            // grpParamChng
             // 
-            this.groupBox3.Controls.Add(this.cmbFreqMach);
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.cmbMotorPartNum);
-            this.groupBox3.Controls.Add(this.lblMotorPartNum);
-            this.groupBox3.Controls.Add(this.cmbMotorSel);
-            this.groupBox3.Controls.Add(this.cmbSelMach);
-            this.groupBox3.Controls.Add(this.lblSelMach);
-            this.groupBox3.Controls.Add(this.lblSelMotor);
-            this.groupBox3.Controls.Add(this.btnParamMachSet);
-            this.groupBox3.Controls.Add(this.txtFLA);
-            this.groupBox3.Controls.Add(this.lblUnitsAmps1);
-            this.groupBox3.Controls.Add(this.lblFLA);
-            this.groupBox3.Controls.Add(this.cmbFreqMotorBase);
-            this.groupBox3.Controls.Add(this.lblFreqMotorBase);
-            this.groupBox3.Controls.Add(this.cmbVoltMotorMax);
-            this.groupBox3.Controls.Add(this.lblVoltMotorMax);
-            this.groupBox3.Controls.Add(this.cmbVoltMach);
-            this.groupBox3.Controls.Add(this.lblVoltMachSupply);
-            this.groupBox3.Controls.Add(this.txtParamChngSrc);
-            this.groupBox3.Controls.Add(this.lblParamChngSrc);
-            this.groupBox3.Controls.Add(this.dgvParamViewChng);
-            this.groupBox3.Controls.Add(this.lblParamModSched);
-            this.groupBox3.Location = new System.Drawing.Point(638, 86);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(614, 783);
-            this.groupBox3.TabIndex = 46;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "VFD Modified Parameter Information";
+            this.grpParamChng.Controls.Add(this.txtParamChngSrc);
+            this.grpParamChng.Controls.Add(this.lblParamChngSrc);
+            this.grpParamChng.Controls.Add(this.dgvParamViewChng);
+            this.grpParamChng.Controls.Add(this.lblParamModSched);
+            this.grpParamChng.Location = new System.Drawing.Point(638, 265);
+            this.grpParamChng.Name = "grpParamChng";
+            this.grpParamChng.Size = new System.Drawing.Size(614, 604);
+            this.grpParamChng.TabIndex = 46;
+            this.grpParamChng.TabStop = false;
+            this.grpParamChng.Text = "VFD Parameter Changes";
             // 
             // cmbFreqMach
             // 
             this.cmbFreqMach.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFreqMach.Enabled = false;
             this.cmbFreqMach.FormattingEnabled = true;
             this.cmbFreqMach.Items.AddRange(new object[] {
-            "208 V",
-            "220 V",
-            "230 V",
-            "240 V",
-            "380 V",
-            "400 V",
-            "415 V",
-            "460 V"});
-            this.cmbFreqMach.Location = new System.Drawing.Point(151, 73);
+            "50 Hz",
+            "60 Hz"});
+            this.cmbFreqMach.Location = new System.Drawing.Point(151, 67);
             this.cmbFreqMach.Name = "cmbFreqMach";
             this.cmbFreqMach.Size = new System.Drawing.Size(105, 21);
             this.cmbFreqMach.TabIndex = 68;
@@ -944,7 +916,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 76);
+            this.label1.Location = new System.Drawing.Point(6, 70);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(139, 13);
             this.label1.TabIndex = 67;
@@ -953,18 +925,8 @@
             // cmbMotorPartNum
             // 
             this.cmbMotorPartNum.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMotorPartNum.Enabled = false;
             this.cmbMotorPartNum.FormattingEnabled = true;
-            this.cmbMotorPartNum.Items.AddRange(new object[] {
-            "208 V",
-            "220 V",
-            "230 V",
-            "240 V",
-            "380 V",
-            "400 V",
-            "415 V",
-            "460 V"});
-            this.cmbMotorPartNum.Location = new System.Drawing.Point(478, 46);
+            this.cmbMotorPartNum.Location = new System.Drawing.Point(478, 40);
             this.cmbMotorPartNum.Name = "cmbMotorPartNum";
             this.cmbMotorPartNum.Size = new System.Drawing.Size(130, 21);
             this.cmbMotorPartNum.TabIndex = 66;
@@ -972,7 +934,7 @@
             // lblMotorPartNum
             // 
             this.lblMotorPartNum.AutoSize = true;
-            this.lblMotorPartNum.Location = new System.Drawing.Point(373, 49);
+            this.lblMotorPartNum.Location = new System.Drawing.Point(373, 43);
             this.lblMotorPartNum.Name = "lblMotorPartNum";
             this.lblMotorPartNum.Size = new System.Drawing.Size(99, 13);
             this.lblMotorPartNum.TabIndex = 65;
@@ -981,18 +943,8 @@
             // cmbMotorSel
             // 
             this.cmbMotorSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMotorSel.Enabled = false;
             this.cmbMotorSel.FormattingEnabled = true;
-            this.cmbMotorSel.Items.AddRange(new object[] {
-            "208 V",
-            "220 V",
-            "230 V",
-            "240 V",
-            "380 V",
-            "400 V",
-            "415 V",
-            "460 V"});
-            this.cmbMotorSel.Location = new System.Drawing.Point(478, 19);
+            this.cmbMotorSel.Location = new System.Drawing.Point(478, 13);
             this.cmbMotorSel.Name = "cmbMotorSel";
             this.cmbMotorSel.Size = new System.Drawing.Size(130, 21);
             this.cmbMotorSel.TabIndex = 64;
@@ -1000,26 +952,17 @@
             // cmbSelMach
             // 
             this.cmbSelMach.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSelMach.Enabled = false;
             this.cmbSelMach.FormattingEnabled = true;
-            this.cmbSelMach.Items.AddRange(new object[] {
-            "208 V",
-            "220 V",
-            "230 V",
-            "240 V",
-            "380 V",
-            "400 V",
-            "415 V",
-            "460 V"});
-            this.cmbSelMach.Location = new System.Drawing.Point(151, 19);
+            this.cmbSelMach.Location = new System.Drawing.Point(151, 13);
             this.cmbSelMach.Name = "cmbSelMach";
             this.cmbSelMach.Size = new System.Drawing.Size(209, 21);
             this.cmbSelMach.TabIndex = 63;
+            this.cmbSelMach.SelectedIndexChanged += new System.EventHandler(this.cmbSelMach_SelectedIndexChanged);
             // 
             // lblSelMach
             // 
             this.lblSelMach.AutoSize = true;
-            this.lblSelMach.Location = new System.Drawing.Point(47, 22);
+            this.lblSelMach.Location = new System.Drawing.Point(47, 16);
             this.lblSelMach.Name = "lblSelMach";
             this.lblSelMach.Size = new System.Drawing.Size(98, 13);
             this.lblSelMach.TabIndex = 62;
@@ -1028,7 +971,7 @@
             // lblSelMotor
             // 
             this.lblSelMotor.AutoSize = true;
-            this.lblSelMotor.Location = new System.Drawing.Point(388, 22);
+            this.lblSelMotor.Location = new System.Drawing.Point(388, 16);
             this.lblSelMotor.Name = "lblSelMotor";
             this.lblSelMotor.Size = new System.Drawing.Size(84, 13);
             this.lblSelMotor.TabIndex = 61;
@@ -1041,14 +984,43 @@
             this.bwrkVFDVerify.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwrkDGV_ProgressChanged);
             this.bwrkVFDVerify.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwrkVFDVerify_RunWorkerCompleted);
             // 
+            // grpSetMach
+            // 
+            this.grpSetMach.Controls.Add(this.btnParamMachSet);
+            this.grpSetMach.Controls.Add(this.cmbFreqMach);
+            this.grpSetMach.Controls.Add(this.txtFLA);
+            this.grpSetMach.Controls.Add(this.lblUnitsAmps1);
+            this.grpSetMach.Controls.Add(this.lblSelMach);
+            this.grpSetMach.Controls.Add(this.lblFLA);
+            this.grpSetMach.Controls.Add(this.label1);
+            this.grpSetMach.Controls.Add(this.lblVoltMachSupply);
+            this.grpSetMach.Controls.Add(this.cmbMotorPartNum);
+            this.grpSetMach.Controls.Add(this.cmbVoltMach);
+            this.grpSetMach.Controls.Add(this.lblMotorPartNum);
+            this.grpSetMach.Controls.Add(this.lblVoltMotorMax);
+            this.grpSetMach.Controls.Add(this.cmbMotorSel);
+            this.grpSetMach.Controls.Add(this.cmbVoltMotorMax);
+            this.grpSetMach.Controls.Add(this.cmbSelMach);
+            this.grpSetMach.Controls.Add(this.lblFreqMotorBase);
+            this.grpSetMach.Controls.Add(this.cmbFreqMotorBase);
+            this.grpSetMach.Controls.Add(this.lblSelMotor);
+            this.grpSetMach.Enabled = false;
+            this.grpSetMach.Location = new System.Drawing.Point(638, 86);
+            this.grpSetMach.Name = "grpSetMach";
+            this.grpSetMach.Size = new System.Drawing.Size(614, 173);
+            this.grpSetMach.TabIndex = 49;
+            this.grpSetMach.TabStop = false;
+            this.grpSetMach.Text = "Machine Settings";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 899);
+            this.Controls.Add(this.grpSetMach);
             this.Controls.Add(this.grpCommSettings);
             this.Controls.Add(this.grpFullParamInfo);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.grpParamChng);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox4);
@@ -1071,8 +1043,10 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewChng)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.grpParamChng.ResumeLayout(false);
+            this.grpParamChng.PerformLayout();
+            this.grpSetMach.ResumeLayout(false);
+            this.grpSetMach.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1129,7 +1103,7 @@
         private System.Windows.Forms.Label lblUnitsAmps1;
         private System.Windows.Forms.TextBox txtFLA;
         private System.Windows.Forms.Button btnParamMachSet;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grpParamChng;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmRegAddr;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmParamNum;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmParmName;
@@ -1159,6 +1133,7 @@
         private System.Windows.Forms.ToolStripMenuItem ctxtSchedChng_Load;
         private System.Windows.Forms.ComboBox cmbFreqMach;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox grpSetMach;
     }
 }
 

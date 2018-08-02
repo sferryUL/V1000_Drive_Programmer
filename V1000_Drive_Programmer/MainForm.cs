@@ -29,12 +29,14 @@ namespace V1000_Param_Prog
         string OLEBaseStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='";
         string OLEEndStr = "';Extended Properties='Excel 12.0 XML;HDR=YES;';";
         string DriveListFile = "DRIVE_LIST.XLSX";
+        string MachDataFile = "MACH_DATA.XLSX";
         string dbFileExt = ".XLSX";
 
         DataTable dtDriveList = new DataTable();
         DataTable dtParamGrpDesc = new DataTable();
-        DataTable dtParamList = new DataTable();
-        DataTable dtParamHDMods = new DataTable();
+        DataTable dtParamListND = new DataTable();
+        DataTable dtParamListHD = new DataTable();
+        DataTable dtMachData = new DataTable();
 
         // VFD status and communication variables
         uint VFDReadRegCnt = 0;
@@ -60,6 +62,8 @@ namespace V1000_Param_Prog
         List<V1000_Param_Data> Param_Mod = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Chng = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Vrfy = new List<V1000_Param_Data>();
+
+        List<string> ParamGrpList = new List<string>();
 
         // Background Worker status 
         ThreadProgressArgs ProgressArgs = new ThreadProgressArgs();
@@ -103,6 +107,8 @@ namespace V1000_Param_Prog
                 }
             }
 
+            GetMachData();
+
             SetVFDCommBtnEnable(false, false, false, false);
             cmbDriveList.Focus();
         }
@@ -124,90 +130,50 @@ namespace V1000_Param_Prog
 
         private void cmbDriveSel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string file, conn_str;
-            cmbParamGroup.Items.Clear();
+            //string file, conn_str;
+            
             DataRow row = dtDriveList.Rows[cmbDriveList.SelectedIndex];
 
-            // Get the filename for master VFD parameter list based on the 
-            // drive selection and build the SQL database connection string.
-            file = row["PARAM_ND_LIST"].ToString() + dbFileExt;
-            conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+            
 
-            // Get the full table for the parameter list from the filename  via a SQL database connectoin
-            if (SQLGetTable(conn_str, ref dtParamList))
+            if (GetParamList(row, "PARAM_ND_LIST", ref dtParamListND, ref Param_List_ND))
             {
-                // Clear the master parameter list and the Full Parameter List datagridview
-                Param_List_ND.Clear();
-
-                // Populate the master parameter list with each of all the parameters that make
-                // up the entire database list and populate the Full Parameter List datagridview
-                foreach (DataRow dr in dtParamList.Rows)
-                {
-                    V1000_Param_Data param = new V1000_Param_Data();
-                    V1000SQLtoParam(dr, ref param);
-                    Param_List_ND.Add(param);
-                }
-
-                // Set the parameter indexing variables based on the drive type
                 SetDriveParamConsts(VFD_V1000);
-
-                // Get the heavy duty modification parameters and build a connection  
-                // string only if a filename entry in the table exists.
                 if (row["PARAM_HD_LIST"].ToString() != "")
                 {
-                    file = row["PARAM_HD_LIST"].ToString() + dbFileExt;
-                    conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
-
-                    // Get the table containing the list of parameters automatically modified by a 
-                    // heavy-duty setting and fill  the the Param_HD_Mods list with all the values.
-                    if (SQLGetTable(conn_str, ref dtParamHDMods))
-                    {
-                        Param_List_HD.Clear();
-                        foreach (DataRow dr in dtParamHDMods.Rows)
-                        {
-                            V1000_Param_Data param = new V1000_Param_Data();
-                            V1000SQLtoParam(dr, ref param);
-                            Param_List_HD.Add(param);
-                        }
-
-                    }
+                    GetParamList(row, "PARAM_HD_LIST", ref dtParamListHD, ref Param_List_HD);
                 }
-
-                if (Param_List_HD.Count > 0)
-                {
-                    cmbDriveDuty.SelectedIndex = 1;
-                    cmbDriveDuty.Enabled = true;
-                }
-                else
-                {
-                    cmbDriveDuty.SelectedIndex = 0;
-                    cmbDriveDuty.Enabled = false;
-                }
-
-                // Get the list of parameter groupings available and fill the Parameter group combobox
-                file = row["PARAM_GRP_DESC"].ToString() + dbFileExt;
-                conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
-
-                if (SQLGetTable(conn_str, ref dtParamGrpDesc))
-                {
-                    foreach (DataRow dr in dtParamGrpDesc.Rows)
-                    {
-                        string str = dr["PARAM_GRP"].ToString() + " - " + dr["GRP_DESC"].ToString();
-                        cmbParamGroup.Items.Add(str);
-                    }
-                    cmbParamGroup.Enabled = true;
-                    cmbParamGroup.SelectedIndex = 0;
-                }
-
-                // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
-                SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
-                btnParamMachSet.Enabled = true;                 // Turn on the Set Machine Parameters button
-                cmbVoltMach.Enabled = true;               // enable all the machine specific parameter setting comboboxes
-                cmbVoltMotorMax.Enabled = true;
-                cmbFreqMotorBase.Enabled = true;
-                txtFLA.Enabled = true;                          // Turn on the Motor FLA textbox
-                msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
             }
+
+            if (Param_List_HD.Count > 0)
+            {
+                cmbDriveDuty.SelectedIndex = 1;
+                cmbDriveDuty.Enabled = true;
+            }
+            else
+            {
+                cmbDriveDuty.SelectedIndex = 0;
+                cmbDriveDuty.Enabled = false;
+            }
+
+            RefreshParamViews();
+
+            if (GetParamGrpList(row, "PARAM_GRP_DESC", ref dtParamGrpDesc) && (cmbParamGroup.Items.Count > 0))
+            {
+                cmbParamGroup.Enabled = true;
+                cmbParamGroup.SelectedIndex = 0;
+            }
+
+            // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
+            SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
+            btnParamMachSet.Enabled = true;                 // Turn on the Set Machine Parameters button
+            cmbVoltMach.Enabled = true;                     // enable all the machine specific parameter setting comboboxes
+            cmbVoltMotorMax.Enabled = true;
+            cmbFreqMotorBase.Enabled = true;
+            txtFLA.Enabled = true;                          // Turn on the Motor FLA textbox
+            msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
+
+            grpSetMach.Enabled = true;
         }
 
         private void cmbDriveDuty_SelectedIndexChanged(object sender, EventArgs e)
@@ -219,7 +185,8 @@ namespace V1000_Param_Prog
             else
                 Param_List = Param_List_HD;
 
-            RefreshParamViews();    // Refresh the Full Parameter List datagridview
+            if(dgvParamViewFull.Rows.Count > 0)
+                RefreshParamViews();    // Refresh the Full Parameter List datagridview
         }
 
         private void cmbParamGroup_SelectedIndexChanged(object sender, EventArgs e)
@@ -243,6 +210,28 @@ namespace V1000_Param_Prog
                 cmbVoltMach.SelectedIndex = cmbVoltMotorMax.SelectedIndex;
         }
 
+        private void cmbSelMach_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataRow row = dtMachData.Rows[cmbSelMach.SelectedIndex];
+
+            cmbMotorSel.Items.Clear();
+            int drive_cnt = Convert.ToInt32(row["VFD_CNT"].ToString());
+            if (drive_cnt > 1)
+            {
+                for (int i = 4; i <= 6; i++)
+                {
+                    if (row[i].ToString() != "")
+                        cmbMotorSel.Items.Add(row[i].ToString());
+                }
+                cmbMotorSel.Enabled = true;
+            }
+            else
+            {
+                cmbMotorSel.Items.Add(row[4].ToString());
+                cmbMotorSel.SelectedIndex = 0;
+                cmbMotorSel.Enabled = false;
+            }
+        }
         #endregion
 
         #region Textbox Functions
@@ -739,6 +728,71 @@ namespace V1000_Param_Prog
         #endregion
 
         #region Database Functions
+        private bool GetMachData()
+        {
+            bool ret_val = false;
+
+            // Get the list of VFDs available and fill the drive list combo box.
+            string conn_str = OLEBaseStr + DataDir + MachDataFile + OLEEndStr;
+            if (SQLGetTable(conn_str, ref dtMachData))
+            {
+                foreach (DataRow dr in dtMachData.Rows)
+                {
+                    string str = dr["MACH_CODE"].ToString() + " - " + dr["MACH_DESC"].ToString();
+                    cmbSelMach.Items.Add(str);
+                }
+            }
+
+            return ret_val;
+        }
+
+        private bool GetParamList(DataRow p_Row, string p_Col, ref DataTable p_Tbl, ref List<V1000_Param_Data> p_List)
+        {
+            bool ret_val = false;
+
+            string file = p_Row[p_Col].ToString() + dbFileExt;
+            string conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+
+            // Get the table containing the list of parameters automatically modified by a 
+            // heavy-duty setting and fill  the the Param_HD_Mods list with all the values.
+            if (SQLGetTable(conn_str, ref p_Tbl))
+            {
+                ret_val = true;
+
+                p_List.Clear();
+                foreach (DataRow dr in p_Tbl.Rows)
+                {
+                    V1000_Param_Data param = new V1000_Param_Data();
+                    V1000SQLtoParam(dr, ref param);
+                    p_List.Add(param);
+                }
+            }
+
+            return ret_val;
+        }
+
+        private bool GetParamGrpList(DataRow p_Row, string p_Col, ref DataTable p_Tbl)
+        {
+            bool ret_val = false;
+
+            cmbParamGroup.Items.Clear();
+
+            // Get the list of parameter groupings available and fill the Parameter group combobox
+            string file = p_Row[p_Col].ToString() + dbFileExt;
+            string conn_str = OLEBaseStr + DataDir + file + OLEEndStr;
+
+            if (SQLGetTable(conn_str, ref p_Tbl))
+            {
+                ret_val = true;
+                foreach (DataRow dr in p_Tbl.Rows)
+                {
+                    string str = dr["PARAM_GRP"].ToString() + " - " + dr["GRP_DESC"].ToString();
+                    cmbParamGroup.Items.Add(str);
+                }
+            }
+
+            return ret_val;
+        }
 
         public bool SQLGetTable(string p_ConnStr, ref DataTable p_Tbl, string p_Query = "SELECT * FROM [SHEET1$]")
         {
@@ -788,11 +842,6 @@ namespace V1000_Param_Prog
             p_Data.NumBase = Convert.ToByte(p_dr[6].ToString());
             p_Data.Units = p_dr[7].ToString();
             p_Data.DefVal = Convert.ToUInt16(p_dr[4].ToString());
-        }
-
-        public void FillList(DataTable p_Tbl, ref List<V1000_Param_Data> p_List)
-        {
-
         }
 
         #endregion
@@ -1481,9 +1530,9 @@ namespace V1000_Param_Prog
             }
         }
         #endregion
+
+        
     }
-
-
 
     public class ThreadProgressArgs : EventArgs
     {
