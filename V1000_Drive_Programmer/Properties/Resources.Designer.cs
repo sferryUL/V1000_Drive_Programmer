@@ -59,5 +59,14 @@ namespace V1000_Drive_Programmer.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;Provider=Microsoft.ACE.OLEDB.12.0;Data Source=&apos;&quot;;.
+        /// </summary>
+        internal static string OLEBaseStr {
+            get {
+                return ResourceManager.GetString("OLEBaseStr", resourceCulture);
+            }
+        }
     }
 }

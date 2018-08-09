@@ -3,9 +3,9 @@ C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\bin\D
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\bin\Debug\V1000_Drive_Programmer.pdb
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.csprojAssemblyReference.cache
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.csproj.ResolveComReference.cache
-C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Param_Prog.frmMain.resources
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.Properties.Resources.resources
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.csproj.GenerateResource.cache
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.csproj.CoreCompileInputs.cache
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.exe
 C:\Users\sferry\source\repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.pdb
+C:\Users\sferry\Source\Repos\V1000_Drive_Programmer\V1000_Drive_Programmer\obj\Debug\V1000_Drive_Programmer.frmMain.resources

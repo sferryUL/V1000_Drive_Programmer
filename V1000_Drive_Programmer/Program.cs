@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace V1000_Param_Prog
+namespace V1000_Drive_Programmer
 {
     static class Program
     {

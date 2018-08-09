@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-using V1000_Param_Prog;
+using V1000_Drive_Programmer;
 using XL = Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
 using System.Data.OleDb;
 using ModbusRTU;
 using V1000_ModbusRTU;
 
-namespace V1000_Param_Prog
+namespace V1000_Drive_Programmer
 {
     public partial class frmMain : Form
     {
@@ -25,18 +25,22 @@ namespace V1000_Param_Prog
 
         // Database Manipulation Variables
         //string DataDir = "C:\\Users\\steve\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
-        string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
-        string OLEBaseStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='";
-        string OLEEndStr = "';Extended Properties='Excel 12.0 XML;HDR=YES;';";
-        string DriveListFile = "DRIVE_LIST.XLSX";
-        string MachDataFile = "MACH_DATA.XLSX";
-        string dbFileExt = ".XLSX";
+        const string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
+        const string OLEBaseStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='";
+        const string OLEEndStr = "';Extended Properties='Excel 12.0 XML;HDR=YES;';";
+        const string dbFileExt = ".XLSX";
+
+        // Urschel Electrical Databases
+        const string dBVFD = "DRIVE_LIST.XLSX";
+        const string dBMachine = "MACH_DATA.XLSX";
+        const string dBMotor = "MOTOR_DATA.XLSX";
+        const string dBChart = "CHART_LIST.XLSX";
+
 
         DataTable dtDriveList = new DataTable();
         DataTable dtParamGrpDesc = new DataTable();
         DataTable dtParamListND = new DataTable();
         DataTable dtParamListHD = new DataTable();
-        DataTable dtMachData = new DataTable();
 
         // VFD status and communication variables
         uint VFDReadRegCnt = 0;
@@ -85,29 +89,10 @@ namespace V1000_Param_Prog
             txtSlaveAddr.Text = "0x1F";
             txtSlaveAddr.SelectionLength = 0;
 
-
-            // Load available serial ports
-            foreach (string s in System.IO.Ports.SerialPort.GetPortNames())
-                cmbSerialPort.Items.Add(s);
-
-            // select last serial port, by default it seems the add-on port is always last.
-            if (cmbSerialPort.Items.Count > 1)
-                cmbSerialPort.SelectedIndex = cmbSerialPort.Items.Count - 1;
-            else
-                cmbSerialPort.SelectedIndex = 0;
-
-            // Get the list of VFDs available and fill the drive list combo box.
-            string conn_str = OLEBaseStr + DataDir + DriveListFile + OLEEndStr;
-            if (SQLGetTable(conn_str, ref dtDriveList))
-            {
-                foreach (DataRow dr in dtDriveList.Rows)
-                {
-                    string str = dr["UL_PARTNUM"].ToString() + " - " + dr["UL_DESC"].ToString();
-                    cmbDriveList.Items.Add(str);
-                }
-            }
-
-            GetMachData();
+            LoadCommComboBoxes();
+            LoadParamComboboxes();
+            LoadMtrComboboxes();
+            LoadMachComboboxes();
 
             SetVFDCommBtnEnable(false, false, false, false);
             cmbDriveList.Focus();
@@ -121,7 +106,64 @@ namespace V1000_Param_Prog
 
         #endregion
 
-        #region Combobox Functions
+        #region Combobox Load Functions
+
+        public void LoadCommComboBoxes()
+        {
+            // Load available serial ports
+            foreach (string s in System.IO.Ports.SerialPort.GetPortNames())
+                cmbSerialPort.Items.Add(s);
+
+            // select last serial port, by default it seems the add-on port is always last.
+            if (cmbSerialPort.Items.Count > 1)
+                cmbSerialPort.SelectedIndex = cmbSerialPort.Items.Count - 1;
+            else
+                cmbSerialPort.SelectedIndex = 0;
+        }
+
+        public void LoadParamComboboxes()
+        {
+            // Get the list of VFDs available and fill the drive list combo box.
+            if (dB_Query(dBVFD, "SELECT * FROM [Sheet1$]", ref dtDriveList))
+            {
+                foreach (DataRow dr in dtDriveList.Rows)
+                {
+                    string str = dr["UL_PARTNUM"].ToString() + " - " + dr["UL_DESC"].ToString();
+                    cmbDriveList.Items.Add(str);
+                }
+            }
+        }
+
+        // load the list of motors 
+        public void LoadMtrComboboxes()
+        {
+            DataTable tbl = new DataTable();
+            if (dB_Query(dBMotor, "SELECT MOTOR_PARTNUM FROM [Sheet1$] ORDER BY MOTOR_PARTNUM ASC", ref tbl))
+            {
+                foreach (DataRow dr in tbl.Rows)
+                {
+                    cmbMtrPartNum.Items.Add(dr[0].ToString());
+                }
+            }
+        }
+        
+
+        // Load list of machine codes with their description
+        public void LoadMachComboboxes()
+        {
+            DataTable tbl = new DataTable();
+            if (dB_Query(dBMachine, "SELECT MACH_CODE, MACH_DESC FROM [Sheet1$]", ref tbl))
+            {
+                foreach (DataRow dr in tbl.Rows)
+                {
+                    string str = dr[0].ToString() + " - " + dr[1].ToString();
+                    cmbMachSel.Items.Add(str);
+                }
+            }
+        }
+        #endregion
+
+        #region Communication and Drive Combobox Functions
 
         private void cmbSerialPort_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -130,11 +172,7 @@ namespace V1000_Param_Prog
 
         private void cmbDriveSel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //string file, conn_str;
-            
             DataRow row = dtDriveList.Rows[cmbDriveList.SelectedIndex];
-
-            
 
             if (GetParamList(row, "PARAM_ND_LIST", ref dtParamListND, ref Param_List_ND))
             {
@@ -166,19 +204,18 @@ namespace V1000_Param_Prog
 
             // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
             SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
-            btnParamMachSet.Enabled = true;                 // Turn on the Set Machine Parameters button
-            cmbVoltMach.Enabled = true;                     // enable all the machine specific parameter setting comboboxes
-            cmbVoltMotorMax.Enabled = true;
-            cmbFreqMotorBase.Enabled = true;
-            txtFLA.Enabled = true;                          // Turn on the Motor FLA textbox
+            btnMtrSet.Enabled = true;                 // Turn on the Set Machine Parameters button
+            cmbVoltSupply.Enabled = true;                     // enable all the machine specific parameter setting comboboxes
+            cmbVoltMtrMax.Enabled = true;
+            cmbFreqMtrBase.Enabled = true;
+            txtMtrFLC.Enabled = true;                          // Turn on the Motor FLA textbox
             msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
 
-            grpSetMach.Enabled = true;
+            grpSetMotor.Enabled = true;
         }
 
         private void cmbDriveDuty_SelectedIndexChanged(object sender, EventArgs e)
         {
-
             // Set the Param_List list object to point to the appropriate list based on the drive duty selection
             if (cmbDriveDuty.SelectedIndex == 0)
                 Param_List = Param_List_ND;
@@ -196,42 +233,8 @@ namespace V1000_Param_Prog
 
             dgvParamViewFull.Rows[index].Selected = true;
             dgvParamViewFull.FirstDisplayedScrollingRowIndex = index;
-
         }
 
-        private void cmbVoltMachSupply_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            cmbVoltMotorMax.SelectedIndex = cmbVoltMach.SelectedIndex;
-        }
-
-        private void cmbVoltMotorMax_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbVoltMach.SelectedIndex == -1)
-                cmbVoltMach.SelectedIndex = cmbVoltMotorMax.SelectedIndex;
-        }
-
-        private void cmbSelMach_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataRow row = dtMachData.Rows[cmbSelMach.SelectedIndex];
-
-            cmbMotorSel.Items.Clear();
-            int drive_cnt = Convert.ToInt32(row["VFD_CNT"].ToString());
-            if (drive_cnt > 1)
-            {
-                for (int i = 4; i <= 6; i++)
-                {
-                    if (row[i].ToString() != "")
-                        cmbMotorSel.Items.Add(row[i].ToString());
-                }
-                cmbMotorSel.Enabled = true;
-            }
-            else
-            {
-                cmbMotorSel.Items.Add(row[4].ToString());
-                cmbMotorSel.SelectedIndex = 0;
-                cmbMotorSel.Enabled = false;
-            }
-        }
         #endregion
 
         #region Textbox Functions
@@ -728,23 +731,6 @@ namespace V1000_Param_Prog
         #endregion
 
         #region Database Functions
-        private bool GetMachData()
-        {
-            bool ret_val = false;
-
-            // Get the list of VFDs available and fill the drive list combo box.
-            string conn_str = OLEBaseStr + DataDir + MachDataFile + OLEEndStr;
-            if (SQLGetTable(conn_str, ref dtMachData))
-            {
-                foreach (DataRow dr in dtMachData.Rows)
-                {
-                    string str = dr["MACH_CODE"].ToString() + " - " + dr["MACH_DESC"].ToString();
-                    cmbSelMach.Items.Add(str);
-                }
-            }
-
-            return ret_val;
-        }
 
         private bool GetParamList(DataRow p_Row, string p_Col, ref DataTable p_Tbl, ref List<V1000_Param_Data> p_List)
         {
@@ -833,6 +819,72 @@ namespace V1000_Param_Prog
             return RetVal;
         }
 
+        public bool dB_Query(string p_dB, string p_Query, ref DataTable p_FillTbl)
+        {
+            bool ret_val = false;
+
+            string conn_str = OLEBaseStr + DataDir + p_dB + OLEEndStr;
+            using (OleDbConnection db_conn = new OleDbConnection(conn_str))
+            {
+                if (db_conn.State == ConnectionState.Closed)
+                {
+                    db_conn.Open();
+                    if (db_conn.State == ConnectionState.Open)
+                    {
+                        OleDbDataAdapter da = new OleDbDataAdapter(p_Query, db_conn);
+                        DataSet ds = new DataSet();
+                        try
+                        {
+                            da.Fill(ds);
+                            p_FillTbl.Clear();
+                            p_FillTbl = ds.Tables[0];
+                            if (p_FillTbl.Rows.Count > 0)
+                                ret_val = true;
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Database Error!!");
+                        }
+
+                        db_conn.Close();
+                    }
+                }
+            }
+
+            return ret_val;
+        }
+
+        public bool dB_Update(string p_dB, string p_SQL)
+        {
+            bool ret_val = false;
+
+            string conn_str = OLEBaseStr + DataDir + p_dB + OLEEndStr;
+
+            using (OleDbConnection db_conn = new OleDbConnection(conn_str))
+            {
+                if (db_conn.State == ConnectionState.Closed)
+                {
+                    db_conn.Open();
+                    if (db_conn.State == ConnectionState.Open)
+                    {
+                        try
+                        {
+                            OleDbCommand cmd = new OleDbCommand(p_SQL, db_conn);
+
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Database Error!!");
+                        }
+                        db_conn.Close();
+                    }
+                }
+            }
+
+            return ret_val;
+        }
+
         public void V1000SQLtoParam(DataRow p_dr, ref V1000_Param_Data p_Data)
         {
             p_Data.RegAddress = Convert.ToUInt16(p_dr[1].ToString());
@@ -842,6 +894,29 @@ namespace V1000_Param_Prog
             p_Data.NumBase = Convert.ToByte(p_dr[6].ToString());
             p_Data.Units = p_dr[7].ToString();
             p_Data.DefVal = Convert.ToUInt16(p_dr[4].ToString());
+        }
+
+        public void GetMotorCurrent()
+        {
+            txtMtrFLC.Text = "";
+
+            // First combine all strings to create the appropriate column header for the motor current data 
+            string str_volt = cmbVoltMtrMax.SelectedItem.ToString();
+            string str_freq = cmbFreqMtrBase.SelectedItem.ToString();
+            string hdr = "FLC_" + str_volt.Substring(0, str_volt.IndexOf(' ')) + "_" + str_freq.Substring(0, str_freq.IndexOf(' '));
+
+            if ((hdr != "FLC_400_60") && (hdr != "FLC_415_60") && (hdr != "FLC_460_50"))
+            {
+                string mtr = cmbMtrPartNum.SelectedItem.ToString();
+                DataTable tbl = new DataTable();
+                string query = "SELECT " + hdr + " FROM [Sheet1$] WHERE [MOTOR_PARTNUM] LIKE '" + mtr + "'";
+                if (dB_Query(dBMotor, query, ref tbl))
+                {
+                    foreach (DataRow dr in tbl.Rows)
+                        txtMtrFLC.Text = dr[0].ToString();
+                }
+            }
+
         }
 
         #endregion
@@ -1186,51 +1261,7 @@ namespace V1000_Param_Prog
         }
 
         #endregion
-
-        #region Machine Specific Functions
-        private void btnSetMotorVals(object sender, EventArgs e)
-        {
-            ushort volt_supply = 0, volt_out = 0, freq_base = 0, fla = 0;
-
-            if ((cmbVoltMach.SelectedIndex == -1) || (cmbFreqMotorBase.SelectedIndex == -1) || (txtFLA.Text == ""))
-            {
-                MessageBox.Show("Machine supply voltage, supply frequency, and motor FLA must have valid entries!");
-                return;
-            }
-
-            // Get all the index values in the full parameter list for each of these parameters
-            int idx_volt_supply = GetParamIndex(VoltSupplyParamNum, Param_List);
-            int idx_volt_out = GetParamIndex(VoltMaxOutParamNum, Param_List);
-            int idx_freq_base = GetParamIndex(FreqBaseParamNum, Param_List);
-            int idx_fla = GetParamIndex(RatedCurrParamNum, Param_List);
-
-            if ((idx_volt_supply > 0) && (idx_volt_out > 0) && (idx_freq_base > 0) && (idx_fla > 0))
-            {
-                try
-                {
-                    volt_supply = Cell2RegVal((string)cmbVoltMach.SelectedItem, Param_List[idx_volt_supply]);
-                    volt_out = Cell2RegVal((string)cmbVoltMotorMax.SelectedItem, Param_List[idx_volt_out]);
-                    freq_base = Cell2RegVal((string)cmbFreqMotorBase.SelectedItem, Param_List[idx_freq_base]);
-                    fla = Cell2RegVal(txtFLA.Text, Param_List[idx_fla]);
-                }
-                catch
-                {
-                    MessageBox.Show("Entry Error!!");
-                    return;
-                }
-
-                UpdateParamViews(volt_supply, idx_volt_supply); // Set supply voltage parameter
-                UpdateParamViews(volt_out, idx_volt_out);       // Set the maximum output voltage parameter
-                UpdateParamViews(freq_base, idx_freq_base);     // Set the base frequency parameter
-                UpdateParamViews(fla, idx_fla);                 // Set the motor rated current parameter
-            }
-            else
-            {
-                MessageBox.Show("Parameter Location Error!!");
-            }
-        }
-        #endregion
-
+        
         #region Parameter View Functions
 
         private void UpdateParamViews(ushort p_NewParamVal, int p_Index)
@@ -1529,9 +1560,220 @@ namespace V1000_Param_Prog
                     break;
             }
         }
+
         #endregion
 
-        
+        #region Machine Specific Functions
+
+        private void cmbSelMach_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbMachDrvName.Items.Clear();                               // Clear the drive names combobox
+            string mach_code = GetMachCode(cmbMachSel.SelectedItem);    // First strip off the machine code from the combo box
+
+            // next query the database for the number of VFDs the machine selection has
+            DataTable tbl = new DataTable();
+            string query = "Select * FROM [Sheet1$] WHERE MACH_CODE Like '" + mach_code + "'";
+            if (dB_Query(dBMachine, query, ref tbl))
+            {
+                // Get drive count, and name information
+                DataRow row = tbl.Rows[0];
+                int drv_cnt = Convert.ToInt32(row["DRV_CNT"].ToString());
+                txtMachDrvCnt.Text = drv_cnt.ToString();
+
+                // Load drive number and name comboboxes if there is more than 0 drives
+                if (drv_cnt > 0)
+                {
+                    for (int i = 0; i < drv_cnt; i++)
+                    {
+                        cmbMachDrvNum.Items.Add((i + 1).ToString());
+                        cmbMachDrvName.Items.Add(row[i + 4].ToString());
+                    }
+                    cmbMachDrvNum.SelectedIndex = 0;
+                    cmbMachDrvName.SelectedIndex = 0;
+                }
+
+                // Get chart count and part number information
+                int chrt_cnt = Convert.ToInt32(row["CHRT_CNT"].ToString());
+                txtMachChrtCnt.Text = chrt_cnt.ToString();
+                if (chrt_cnt > 0)
+                {
+                    for (int i = 0; i < chrt_cnt; i++)
+                        cmbMachChrtNum.Items.Add(row[i + 10].ToString());
+                    cmbMachChrtNum.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void cmbMachDrvChrt_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbMachDrvNum_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbMachDrvName.SelectedIndex = cmbMachDrvNum.SelectedIndex;
+        }
+
+        private void btnMachLoad_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbMachDrvName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void btnMachStore_Click(object sender, EventArgs e)
+        {
+            if (cmbMachSel.SelectedIndex < 0)
+                return;
+
+            string mach_code = GetMachCode(cmbMachSel.SelectedItem);
+
+            string query = "SELECT DRV_CNT FROM [Sheet1$] WHERE MACH_CODE LIKE '" + mach_code + "'";
+            DataTable tbl = new DataTable();
+            dB_Query(dBMachine, query, ref tbl);
+            DataRow row = tbl.Rows[0];
+            int drv_cnt = Convert.ToInt32(row["DRV_CNT"].ToString());
+            drv_cnt++;
+
+            string upd_cmd = "UPDATE [Sheet1$] SET DRV_CNT = '" + drv_cnt.ToString() + "' WHERE MACH_CODE LIKE '" + mach_code + "'";
+            dB_Update(dBMachine, upd_cmd);
+        }
+
+        private string GetMachCode(object p_cmbItem)
+        {
+            string str = p_cmbItem.ToString();
+            int idx = str.IndexOf(' ');
+            string mach_code = str.Substring(0, idx);
+
+            return mach_code;
+        }
+
+        #endregion
+
+        #region Motor Specific Functions
+        private void cmbVoltMach_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbVoltMtrMax.SelectedIndex = cmbVoltSupply.SelectedIndex;
+
+            if ((cmbVoltSupply.SelectedItem.ToString() == "400 V") || (cmbVoltSupply.SelectedItem.ToString() == "415 V"))
+            {
+                cmbFreqSupply.SelectedIndex = 0;
+                cmbFreqSupply.Enabled = false;
+                cmbFreqMtrBase.SelectedIndex = 0;
+                cmbFreqMtrBase.Enabled = false;
+            }
+            else if (cmbVoltSupply.SelectedItem.ToString() == "460 V")
+            {
+                cmbFreqSupply.SelectedIndex = 1;
+                cmbFreqSupply.Enabled = false;
+                cmbFreqMtrBase.SelectedIndex = 1;
+                cmbFreqMtrBase.Enabled = false;
+            }
+            else
+            {
+                cmbFreqSupply.Enabled = true;
+                cmbFreqMtrBase.Enabled = true;
+            }
+        }
+
+        private void cmbFreqMach_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbFreqMtrBase.SelectedIndex = cmbFreqSupply.SelectedIndex;
+        }
+
+        private void cmbMotorPartNum_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((cmbVoltSupply.SelectedIndex >= 0) && (cmbFreqSupply.SelectedIndex >= 0))
+                GetMotorCurrent();
+        }
+
+        private void cmbVoltMotorMax_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbVoltSupply.SelectedIndex == -1)
+                cmbVoltSupply.SelectedIndex = cmbVoltMtrMax.SelectedIndex;
+
+            if ((cmbVoltMtrMax.SelectedItem.ToString() == "400 V") || (cmbVoltMtrMax.SelectedItem.ToString() == "415 V"))
+            {
+                cmbFreqSupply.SelectedIndex = 0;
+                cmbFreqSupply.Enabled = false;
+                cmbFreqMtrBase.SelectedIndex = 0;
+                cmbFreqMtrBase.Enabled = false;
+            }
+            else if (cmbVoltMtrMax.SelectedItem.ToString() == "460 V")
+            {
+                cmbFreqSupply.SelectedIndex = 1;
+                cmbFreqSupply.Enabled = false;
+                cmbFreqMtrBase.SelectedIndex = 1;
+                cmbFreqMtrBase.Enabled = false;
+            }
+            else
+            {
+                cmbFreqSupply.Enabled = true;
+                cmbFreqMtrBase.Enabled = true;
+            }
+
+            if ((cmbMtrPartNum.SelectedIndex >= 0) && (cmbFreqMtrBase.SelectedIndex >= 0))
+                GetMotorCurrent();
+        }
+
+        private void cmbFreqMotorBase_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbFreqSupply.SelectedIndex == -1)
+                cmbFreqSupply.SelectedIndex = cmbFreqMtrBase.SelectedIndex;
+
+            if ((cmbVoltMtrMax.SelectedIndex >= 0) && (cmbMtrPartNum.SelectedIndex >= 0))
+                GetMotorCurrent();
+        }
+
+
+        private void btnSetMotorVals(object sender, EventArgs e)
+        {
+            ushort volt_supply = 0, volt_out = 0, freq_base = 0, fla = 0;
+
+            if ((cmbVoltSupply.SelectedIndex == -1) || (cmbFreqMtrBase.SelectedIndex == -1) || (txtMtrFLC.Text == ""))
+            {
+                MessageBox.Show("Machine supply voltage, supply frequency, and motor FLA must have valid entries!");
+                return;
+            }
+
+            // Get all the index values in the full parameter list for each of these parameters
+            int idx_volt_supply = GetParamIndex(VoltSupplyParamNum, Param_List);
+            int idx_volt_out = GetParamIndex(VoltMaxOutParamNum, Param_List);
+            int idx_freq_base = GetParamIndex(FreqBaseParamNum, Param_List);
+            int idx_fla = GetParamIndex(RatedCurrParamNum, Param_List);
+
+            if ((idx_volt_supply > 0) && (idx_volt_out > 0) && (idx_freq_base > 0) && (idx_fla > 0))
+            {
+                try
+                {
+                    volt_supply = Cell2RegVal((string)cmbVoltSupply.SelectedItem, Param_List[idx_volt_supply]);
+                    volt_out = Cell2RegVal((string)cmbVoltMtrMax.SelectedItem, Param_List[idx_volt_out]);
+                    freq_base = Cell2RegVal((string)cmbFreqMtrBase.SelectedItem, Param_List[idx_freq_base]);
+                    fla = Cell2RegVal(txtMtrFLC.Text, Param_List[idx_fla]);
+                }
+                catch
+                {
+                    MessageBox.Show("Entry Error!!");
+                    return;
+                }
+
+                UpdateParamViews(volt_supply, idx_volt_supply); // Set supply voltage parameter
+                UpdateParamViews(volt_out, idx_volt_out);       // Set the maximum output voltage parameter
+                UpdateParamViews(freq_base, idx_freq_base);     // Set the base frequency parameter
+                UpdateParamViews(fla, idx_fla);                 // Set the motor rated current parameter
+            }
+            else
+            {
+                MessageBox.Show("Parameter Location Error!!");
+            }
+        }
+
+        #endregion
+      
     }
 
     public class ThreadProgressArgs : EventArgs
