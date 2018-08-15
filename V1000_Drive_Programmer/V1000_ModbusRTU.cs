@@ -120,7 +120,9 @@ namespace V1000_ModbusRTU
             {
                 if (p_SPort.BytesToRead > 0)
                 {
-                    p_SPort.DiscardInBuffer();
+                    byte[] TempBuff = new byte[p_SPort.BytesToRead];
+                    p_SPort.Read(TempBuff, 0, p_SPort.BytesToRead);
+                    //p_SPort.DiscardInBuffer();
                 }
                 RetCode = 0x8002;
                 goto DataTransferExit;
@@ -188,6 +190,8 @@ namespace V1000_ModbusRTU
 
         public const ushort AccLvlReg = 0x101;
         public const ushort AccLvlOpOnly = 0x0000;
+
+        public const ushort InitReg = 0x103;
 
         public const ushort RegCtrlMethod = 0x0103;
 
