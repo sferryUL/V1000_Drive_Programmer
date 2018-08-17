@@ -126,18 +126,18 @@
             this.grpSetMotor = new System.Windows.Forms.GroupBox();
             this.btnMtrStore = new System.Windows.Forms.Button();
             this.grpSetMach = new System.Windows.Forms.GroupBox();
+            this.txtMachDrvName = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtMachChrtCnt = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtMachDrvCnt = new System.Windows.Forms.TextBox();
+            this.btnMachListDel = new System.Windows.Forms.Button();
             this.btnMachListLoad = new System.Windows.Forms.Button();
             this.btnMachListStore = new System.Windows.Forms.Button();
             this.cmbMachChrtNum = new System.Windows.Forms.ComboBox();
-            this.cmbMachDrvName = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbMachDrvNum = new System.Windows.Forms.ComboBox();
-            this.btnMachListDel = new System.Windows.Forms.Button();
             this.grpCommSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewFull)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -348,27 +348,27 @@
             this.ctxtSchedChng_Save,
             this.ctxtSchedChng_Clear});
             this.ctxtSchedChng.Name = "ctxtSchedChng";
-            this.ctxtSchedChng.Size = new System.Drawing.Size(167, 70);
+            this.ctxtSchedChng.Size = new System.Drawing.Size(216, 70);
             this.ctxtSchedChng.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtSchedChng_Opening);
             // 
             // ctxtSchedChng_Load
             // 
             this.ctxtSchedChng_Load.Name = "ctxtSchedChng_Load";
-            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(166, 22);
-            this.ctxtSchedChng_Load.Text = "Load Change List";
+            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(215, 22);
+            this.ctxtSchedChng_Load.Text = "Load Change List from File";
             this.ctxtSchedChng_Load.Click += new System.EventHandler(this.LoadParams);
             // 
             // ctxtSchedChng_Save
             // 
             this.ctxtSchedChng_Save.Name = "ctxtSchedChng_Save";
-            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(166, 22);
-            this.ctxtSchedChng_Save.Text = "Save Change List";
+            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(215, 22);
+            this.ctxtSchedChng_Save.Text = "Save Change List to File";
             this.ctxtSchedChng_Save.Click += new System.EventHandler(this.SaveParams);
             // 
             // ctxtSchedChng_Clear
             // 
             this.ctxtSchedChng_Clear.Name = "ctxtSchedChng_Clear";
-            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(166, 22);
+            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(215, 22);
             this.ctxtSchedChng_Clear.Text = "Clear Change List";
             this.ctxtSchedChng_Clear.Click += new System.EventHandler(this.clearScheduledChangesToolStripMenuItem_Click);
             // 
@@ -378,20 +378,20 @@
             this.ctxtDriveMod_Save,
             this.ctxtDriveMod_Clear});
             this.ctxtDriveMod.Name = "ctxtDriveMod";
-            this.ctxtDriveMod.Size = new System.Drawing.Size(212, 48);
+            this.ctxtDriveMod.Size = new System.Drawing.Size(247, 48);
             this.ctxtDriveMod.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtDriveMod_Opening);
             // 
             // ctxtDriveMod_Save
             // 
             this.ctxtDriveMod_Save.Name = "ctxtDriveMod_Save";
-            this.ctxtDriveMod_Save.Size = new System.Drawing.Size(211, 22);
-            this.ctxtDriveMod_Save.Text = "Save Modified Parameters";
+            this.ctxtDriveMod_Save.Size = new System.Drawing.Size(246, 22);
+            this.ctxtDriveMod_Save.Text = "Save Modified Parameters to File";
             this.ctxtDriveMod_Save.Click += new System.EventHandler(this.SaveParams);
             // 
             // ctxtDriveMod_Clear
             // 
             this.ctxtDriveMod_Clear.Name = "ctxtDriveMod_Clear";
-            this.ctxtDriveMod_Clear.Size = new System.Drawing.Size(211, 22);
+            this.ctxtDriveMod_Clear.Size = new System.Drawing.Size(246, 22);
             this.ctxtDriveMod_Clear.Text = "Clear List";
             this.ctxtDriveMod_Clear.Click += new System.EventHandler(this.clearListToolStripMenuItem_Click);
             // 
@@ -1029,6 +1029,7 @@
             // 
             // grpSetMach
             // 
+            this.grpSetMach.Controls.Add(this.txtMachDrvName);
             this.grpSetMach.Controls.Add(this.label5);
             this.grpSetMach.Controls.Add(this.txtMachChrtCnt);
             this.grpSetMach.Controls.Add(this.label3);
@@ -1037,19 +1038,27 @@
             this.grpSetMach.Controls.Add(this.btnMachListLoad);
             this.grpSetMach.Controls.Add(this.btnMachListStore);
             this.grpSetMach.Controls.Add(this.cmbMachChrtNum);
-            this.grpSetMach.Controls.Add(this.cmbMachDrvName);
             this.grpSetMach.Controls.Add(this.label4);
             this.grpSetMach.Controls.Add(this.label2);
             this.grpSetMach.Controls.Add(this.cmbMachSel);
             this.grpSetMach.Controls.Add(this.lblSelMach);
             this.grpSetMach.Controls.Add(this.cmbMachDrvNum);
             this.grpSetMach.Controls.Add(this.lblSelMotor);
+            this.grpSetMach.Enabled = false;
             this.grpSetMach.Location = new System.Drawing.Point(643, 643);
             this.grpSetMach.Name = "grpSetMach";
             this.grpSetMach.Size = new System.Drawing.Size(614, 138);
             this.grpSetMach.TabIndex = 50;
             this.grpSetMach.TabStop = false;
             this.grpSetMach.Text = "Machine Settings";
+            // 
+            // txtMachDrvName
+            // 
+            this.txtMachDrvName.Location = new System.Drawing.Point(433, 66);
+            this.txtMachDrvName.Name = "txtMachDrvName";
+            this.txtMachDrvName.ReadOnly = true;
+            this.txtMachDrvName.Size = new System.Drawing.Size(175, 20);
+            this.txtMachDrvName.TabIndex = 99;
             // 
             // label5
             // 
@@ -1066,6 +1075,7 @@
             this.txtMachChrtCnt.Enabled = false;
             this.txtMachChrtCnt.Location = new System.Drawing.Point(81, 66);
             this.txtMachChrtCnt.Name = "txtMachChrtCnt";
+            this.txtMachChrtCnt.ReadOnly = true;
             this.txtMachChrtCnt.Size = new System.Drawing.Size(23, 20);
             this.txtMachChrtCnt.TabIndex = 98;
             this.txtMachChrtCnt.TabStop = false;
@@ -1087,16 +1097,27 @@
             this.txtMachDrvCnt.Enabled = false;
             this.txtMachDrvCnt.Location = new System.Drawing.Point(186, 66);
             this.txtMachDrvCnt.Name = "txtMachDrvCnt";
+            this.txtMachDrvCnt.ReadOnly = true;
             this.txtMachDrvCnt.Size = new System.Drawing.Size(23, 20);
             this.txtMachDrvCnt.TabIndex = 98;
             this.txtMachDrvCnt.TabStop = false;
             this.txtMachDrvCnt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtMachDrvCnt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSlaveAddr_KeyDown);
             // 
+            // btnMachListDel
+            // 
+            this.btnMachListDel.Location = new System.Drawing.Point(221, 105);
+            this.btnMachListDel.Name = "btnMachListDel";
+            this.btnMachListDel.Size = new System.Drawing.Size(125, 23);
+            this.btnMachListDel.TabIndex = 65;
+            this.btnMachListDel.Text = "Delete Parameter List";
+            this.btnMachListDel.UseVisualStyleBackColor = true;
+            this.btnMachListDel.Click += new System.EventHandler(this.btnMachListDel_Click);
+            // 
             // btnMachListLoad
             // 
             this.btnMachListLoad.Enabled = false;
-            this.btnMachListLoad.Location = new System.Drawing.Point(498, 105);
+            this.btnMachListLoad.Location = new System.Drawing.Point(483, 105);
             this.btnMachListLoad.Name = "btnMachListLoad";
             this.btnMachListLoad.Size = new System.Drawing.Size(125, 23);
             this.btnMachListLoad.TabIndex = 65;
@@ -1106,7 +1127,7 @@
             // 
             // btnMachListStore
             // 
-            this.btnMachListStore.Location = new System.Drawing.Point(367, 105);
+            this.btnMachListStore.Location = new System.Drawing.Point(352, 105);
             this.btnMachListStore.Name = "btnMachListStore";
             this.btnMachListStore.Size = new System.Drawing.Size(125, 23);
             this.btnMachListStore.TabIndex = 65;
@@ -1122,16 +1143,6 @@
             this.cmbMachChrtNum.Size = new System.Drawing.Size(97, 21);
             this.cmbMachChrtNum.TabIndex = 63;
             this.cmbMachChrtNum.SelectedIndexChanged += new System.EventHandler(this.cmbMachDrvChrt_SelectedIndexChanged);
-            // 
-            // cmbMachDrvName
-            // 
-            this.cmbMachDrvName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMachDrvName.FormattingEnabled = true;
-            this.cmbMachDrvName.Location = new System.Drawing.Point(447, 66);
-            this.cmbMachDrvName.Name = "cmbMachDrvName";
-            this.cmbMachDrvName.Size = new System.Drawing.Size(161, 21);
-            this.cmbMachDrvName.TabIndex = 63;
-            this.cmbMachDrvName.SelectedIndexChanged += new System.EventHandler(this.cmbMachDrvName_SelectedIndexChanged);
             // 
             // label4
             // 
@@ -1162,17 +1173,6 @@
             this.cmbMachDrvNum.Size = new System.Drawing.Size(42, 21);
             this.cmbMachDrvNum.TabIndex = 64;
             this.cmbMachDrvNum.SelectedIndexChanged += new System.EventHandler(this.cmbMachDrvNum_SelectedIndexChanged);
-            // 
-            // btnMachListDel
-            // 
-            this.btnMachListDel.Enabled = false;
-            this.btnMachListDel.Location = new System.Drawing.Point(236, 105);
-            this.btnMachListDel.Name = "btnMachListDel";
-            this.btnMachListDel.Size = new System.Drawing.Size(125, 23);
-            this.btnMachListDel.TabIndex = 65;
-            this.btnMachListDel.Text = "Delete Parameter List";
-            this.btnMachListDel.UseVisualStyleBackColor = true;
-            this.btnMachListDel.Click += new System.EventHandler(this.btnMachLoad_Click);
             // 
             // frmMain
             // 
@@ -1300,7 +1300,6 @@
         private System.Windows.Forms.GroupBox grpSetMotor;
         private System.Windows.Forms.GroupBox grpSetMach;
         private System.Windows.Forms.Button btnMachListStore;
-        private System.Windows.Forms.ComboBox cmbMachDrvName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnMachListLoad;
         private System.Windows.Forms.ComboBox cmbMachDrvNum;
@@ -1312,6 +1311,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtMachChrtCnt;
         private System.Windows.Forms.Button btnMachListDel;
+        private System.Windows.Forms.TextBox txtMachDrvName;
     }
 }
 

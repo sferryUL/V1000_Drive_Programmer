@@ -18,7 +18,7 @@ namespace V1000_Drive_Programmer
 {
     partial class frmMain
     {
-        public bool dB_MachAddChart(string p_Mach, string p_ChrtNum, string p_DrvNum)
+        public bool dB_MachAddChart(string p_Mach, string p_ChrtNum)
         {
             bool ret_val = false;
 
@@ -27,7 +27,7 @@ namespace V1000_Drive_Programmer
             ret_val = dB_Update(db, sql);
 
             // create the actual chart file
-            dB_CreateDB(p_ChrtNum + "_" + p_DrvNum, "IDX, PARAM_NUM, PARAM_VAL");
+            dB_CreateDB(p_ChrtNum, "IDX, PARAM_NUM, PARAM_VAL");
 
             return ret_val;
         }
@@ -39,6 +39,87 @@ namespace V1000_Drive_Programmer
             ret_val = dB_Update(p_dB, sql);
             return ret_val;
         }
+
+        public void dB_Drop(string p_dB)
+        {
+            string filename = DataDir + p_dB + dbFileExt;
+            System.IO.File.Delete(filename);
+        }
+
+        //public bool dB_Delete(string p_dB, string p_Col, string p_Cond)
+        //{
+        //    bool ret_val = false;
+
+        //    string sql = "DELETE FROM [Sheet1$] WHERE [" + p_Col + "] LIKE '" + p_Cond + "%';";
+        //    ret_val = dB_Update(p_dB, sql);
+        //    return ret_val;
+        //}
+
+        
+        public int dB_Delete(string p_dB, string p_Col, string p_Cond)
+        {
+            int ret_val = 0;
+            int col_idx = 0, row_idx = 0;
+            string filename = DataDir + p_dB;
+
+            XL.Application xlApp = new XL.Application();
+            XL._Workbook xlWorkbook = xlApp.Workbooks.Open(filename);
+            XL._Worksheet xlWorksheet = xlWorkbook.Worksheets["Sheet1"];
+            XL.Range xlRange = xlWorksheet.UsedRange;
+
+            int row_cnt = xlRange.Rows.Count;
+            int col_cnt = xlRange.Columns.Count;
+            
+            // First find the column number
+            for(int i=1;i<col_cnt;i++)
+            {
+                string val = xlRange.Cells[1, i].Value2.ToString();
+                if(val == p_Col)
+                {
+                    col_idx = i;
+                    break;
+                }
+            }
+
+            if(col_idx > 0)
+            {
+                // Next find the row number to delete
+                for(int i=2;i<=row_cnt;i++)
+                {
+                    string val = xlRange.Cells[i, col_idx].Value2.ToString();
+                    if(val == p_Cond)
+                    {
+                        row_idx = i;
+                        break;
+                    }
+                }
+                
+                if(row_idx > 0)
+                {
+                    (xlWorksheet.Rows[row_idx, System.Reflection.Missing.Value] as XL.Range).Delete(XL.XlDeleteShiftDirection.xlShiftUp);
+                    ret_val = 1;
+                }
+                else
+                {
+                    ret_val = 0;
+                }
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            xlApp.DisplayAlerts = false;
+            xlWorkbook.Save();
+            xlWorkbook.Close();
+            xlApp.Quit();
+
+            // release COM objects
+            Marshal.ReleaseComObject(xlWorkbook);
+            Marshal.ReleaseComObject(xlWorksheet);
+            Marshal.ReleaseComObject(xlApp);
+
+            return ret_val;
+        }
+        
 
 
         void dB_CreateDB(string p_Name, string p_Fields)
@@ -172,7 +253,7 @@ namespace V1000_Drive_Programmer
         public int dB_Query(string p_dB, ref DataTable p_Tbl, string p_Cols, string p_ID, string p_Cond = "%")
         {
             int row_cnt;
-            StringBuilder query = new StringBuilder("SELECT " + p_Cols + " FROM [Sheet1$]");
+            StringBuilder query = new StringBuilder("SELECT " + p_Cols + " FROM [Sheet1$] ");
 
             if(p_ID != "")
                 query.Append("WHERE " + p_ID + " LIKE '" + p_Cond + "'");
@@ -186,7 +267,7 @@ namespace V1000_Drive_Programmer
         {
             int row_cnt = 0;
 
-            string conn_str = OLEBaseStr + DataDir + p_dB + OLEEndStr;
+            string conn_str = OLEBaseStr + DataDir + p_dB + dbFileExt + OLEEndStr;
             using(OleDbConnection db_conn = new OleDbConnection(conn_str))
             {
                 if(db_conn.State == ConnectionState.Closed)
@@ -243,9 +324,9 @@ namespace V1000_Drive_Programmer
                             OleDbCommand cmd = new OleDbCommand(p_SQL, db_conn);
                             cmd.ExecuteNonQuery();
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            MessageBox.Show("Database Error!!");
+                            MessageBox.Show("Database Error!!\n" + ex.Message);
                         }
                         db_conn.Close();
                     }
