@@ -24,10 +24,11 @@ namespace V1000_Drive_Programmer
         #region Global Class Object/Variable Declarations
 
         // Database Manipulation Variables
+        //const string DataDir = "data\\";
         //const string DataDir = "C:\\Users\\steve\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
-        //const string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
-        //const string DataDir = "C:\\Users\\sferry\\data\\";
-        const string DataDir = "data\\";
+        const string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
+        //const string DataDir = "C:\\Users\\sferry\\desktop\\data\\";
+        
         const string OLEBaseStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='";
         const string OLEEndStr = "';Extended Properties='Excel 12.0 XML;HDR=YES;';";
         const string dbFileExt = ".XLSX";
@@ -70,8 +71,6 @@ namespace V1000_Drive_Programmer
         List<V1000_Param_Data> Param_Mod = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Chng = new List<V1000_Param_Data>();
         List<V1000_Param_Data> Param_Vrfy = new List<V1000_Param_Data>();
-
-        List<string> ParamGrpList = new List<string>();
 
         // Background Worker status 
         ThreadProgressArgs ProgressArgs = new ThreadProgressArgs();
@@ -132,6 +131,7 @@ namespace V1000_Drive_Programmer
                 string caption = "Communication Port Error";
                 if(YNMsgBox(msg, caption) == DialogResult.No)
                     this.Close();
+                
             }
         }
 
@@ -226,7 +226,7 @@ namespace V1000_Drive_Programmer
             msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
 
             grpSetMotor.Enabled = true;
-            btnMachLoad.Enabled = true;
+            btnMachListLoad.Enabled = true;
         }
 
         private void cmbDriveDuty_SelectedIndexChanged(object sender, EventArgs e)
@@ -525,6 +525,18 @@ namespace V1000_Drive_Programmer
         {
             if (!bwrkModVFD.IsBusy)
             {
+                // Check and see if there has been an entry for motor current in the change parameter
+                // list. If there isn't verify with the user that they would like to proceed without
+                // setting up the motor.
+                int idx = GetParamIndex(RatedCurrParamNum, Param_Chng);
+                if(idx < 0)
+                {
+                    string msg = "The motor setup parameters have not been entered, do you wish to continue without setting up the motor parameters?";
+                    string cap = "Motor Entry Missing";
+                    if(YNMsgBox(msg, cap) == DialogResult.No)
+                        return;
+                }
+
                 ProgressArgs.ClearVFDWriteVals();
                 ProgressArgs.VFDWrite_Stat = ThreadProgressArgs.Stat_Running;
                 bwrkModVFD.RunWorkerAsync();
@@ -1188,7 +1200,12 @@ namespace V1000_Drive_Programmer
 
                     // Clone the row with the changed value and add it to the Datagridview for scheduled parameter changes.
                     dgvParamViewChng.Rows.Add(CloneRow(dgvParamViewFull, p_Index));
-                    dgvParamViewChng.Rows[dgvParamViewChng.RowCount - 1].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
+
+                    // Get the parameter number from the master index
+                    string param_num = Param_List[p_Index].ParamNum;
+                    int idx_chng = GetParamIndex(param_num, Param_Chng);
+                    dgvParamViewChng.Rows[dgvParamViewChng.RowCount - 1].Cells[4].Value = Param_Chng[idx_chng].ParamValDisp;
+                    //dgvParamViewChng.Rows[dgvParamViewChng.RowCount - 1].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
 
                     // Fix the user entry to be the properly formatted string from any inaccuracies in formatting by the user.
                     dgvParamViewFull.Rows[p_Index].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
@@ -1778,6 +1795,10 @@ namespace V1000_Drive_Programmer
 
         #endregion
 
+        private void btnMtrStore_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class ThreadProgressArgs : EventArgs

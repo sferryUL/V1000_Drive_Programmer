@@ -130,13 +130,14 @@
             this.txtMachChrtCnt = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtMachDrvCnt = new System.Windows.Forms.TextBox();
-            this.btnMachLoad = new System.Windows.Forms.Button();
-            this.btnMachStore = new System.Windows.Forms.Button();
+            this.btnMachListLoad = new System.Windows.Forms.Button();
+            this.btnMachListStore = new System.Windows.Forms.Button();
             this.cmbMachChrtNum = new System.Windows.Forms.ComboBox();
             this.cmbMachDrvName = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbMachDrvNum = new System.Windows.Forms.ComboBox();
+            this.btnMachListDel = new System.Windows.Forms.Button();
             this.grpCommSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParamViewFull)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -707,7 +708,7 @@
             this.dgvParamViewChng.Name = "dgvParamViewChng";
             this.dgvParamViewChng.RowHeadersVisible = false;
             this.dgvParamViewChng.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvParamViewChng.Size = new System.Drawing.Size(600, 390);
+            this.dgvParamViewChng.Size = new System.Drawing.Size(600, 384);
             this.dgvParamViewChng.TabIndex = 40;
             this.dgvParamViewChng.TabStop = false;
             // 
@@ -910,7 +911,7 @@
             this.grpParamChng.Controls.Add(this.lblParamModSched);
             this.grpParamChng.Location = new System.Drawing.Point(638, 196);
             this.grpParamChng.Name = "grpParamChng";
-            this.grpParamChng.Size = new System.Drawing.Size(614, 415);
+            this.grpParamChng.Size = new System.Drawing.Size(614, 441);
             this.grpParamChng.TabIndex = 46;
             this.grpParamChng.TabStop = false;
             this.grpParamChng.Text = "VFD Parameter Changes";
@@ -1024,7 +1025,7 @@
             this.btnMtrStore.TabIndex = 60;
             this.btnMtrStore.Text = "Store Motor Values";
             this.btnMtrStore.UseVisualStyleBackColor = true;
-            this.btnMtrStore.Click += new System.EventHandler(this.btnSetMotorVals);
+            this.btnMtrStore.Click += new System.EventHandler(this.btnMtrStore_Click);
             // 
             // grpSetMach
             // 
@@ -1032,8 +1033,9 @@
             this.grpSetMach.Controls.Add(this.txtMachChrtCnt);
             this.grpSetMach.Controls.Add(this.label3);
             this.grpSetMach.Controls.Add(this.txtMachDrvCnt);
-            this.grpSetMach.Controls.Add(this.btnMachLoad);
-            this.grpSetMach.Controls.Add(this.btnMachStore);
+            this.grpSetMach.Controls.Add(this.btnMachListDel);
+            this.grpSetMach.Controls.Add(this.btnMachListLoad);
+            this.grpSetMach.Controls.Add(this.btnMachListStore);
             this.grpSetMach.Controls.Add(this.cmbMachChrtNum);
             this.grpSetMach.Controls.Add(this.cmbMachDrvName);
             this.grpSetMach.Controls.Add(this.label4);
@@ -1091,26 +1093,26 @@
             this.txtMachDrvCnt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtMachDrvCnt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSlaveAddr_KeyDown);
             // 
-            // btnMachLoad
+            // btnMachListLoad
             // 
-            this.btnMachLoad.Enabled = false;
-            this.btnMachLoad.Location = new System.Drawing.Point(369, 105);
-            this.btnMachLoad.Name = "btnMachLoad";
-            this.btnMachLoad.Size = new System.Drawing.Size(110, 23);
-            this.btnMachLoad.TabIndex = 65;
-            this.btnMachLoad.Text = "Load Parameters";
-            this.btnMachLoad.UseVisualStyleBackColor = true;
-            this.btnMachLoad.Click += new System.EventHandler(this.btnMachLoad_Click);
+            this.btnMachListLoad.Enabled = false;
+            this.btnMachListLoad.Location = new System.Drawing.Point(498, 105);
+            this.btnMachListLoad.Name = "btnMachListLoad";
+            this.btnMachListLoad.Size = new System.Drawing.Size(125, 23);
+            this.btnMachListLoad.TabIndex = 65;
+            this.btnMachListLoad.Text = "Load Parameter List";
+            this.btnMachListLoad.UseVisualStyleBackColor = true;
+            this.btnMachListLoad.Click += new System.EventHandler(this.btnMachLoad_Click);
             // 
-            // btnMachStore
+            // btnMachListStore
             // 
-            this.btnMachStore.Location = new System.Drawing.Point(498, 105);
-            this.btnMachStore.Name = "btnMachStore";
-            this.btnMachStore.Size = new System.Drawing.Size(110, 23);
-            this.btnMachStore.TabIndex = 65;
-            this.btnMachStore.Text = "Store Parameters";
-            this.btnMachStore.UseVisualStyleBackColor = true;
-            this.btnMachStore.Click += new System.EventHandler(this.btnMachStore_Click);
+            this.btnMachListStore.Location = new System.Drawing.Point(367, 105);
+            this.btnMachListStore.Name = "btnMachListStore";
+            this.btnMachListStore.Size = new System.Drawing.Size(125, 23);
+            this.btnMachListStore.TabIndex = 65;
+            this.btnMachListStore.Text = "Store Parameter List";
+            this.btnMachListStore.UseVisualStyleBackColor = true;
+            this.btnMachListStore.Click += new System.EventHandler(this.btnMachStore_Click);
             // 
             // cmbMachChrtNum
             // 
@@ -1160,6 +1162,17 @@
             this.cmbMachDrvNum.Size = new System.Drawing.Size(42, 21);
             this.cmbMachDrvNum.TabIndex = 64;
             this.cmbMachDrvNum.SelectedIndexChanged += new System.EventHandler(this.cmbMachDrvNum_SelectedIndexChanged);
+            // 
+            // btnMachListDel
+            // 
+            this.btnMachListDel.Enabled = false;
+            this.btnMachListDel.Location = new System.Drawing.Point(236, 105);
+            this.btnMachListDel.Name = "btnMachListDel";
+            this.btnMachListDel.Size = new System.Drawing.Size(125, 23);
+            this.btnMachListDel.TabIndex = 65;
+            this.btnMachListDel.Text = "Delete Parameter List";
+            this.btnMachListDel.UseVisualStyleBackColor = true;
+            this.btnMachListDel.Click += new System.EventHandler(this.btnMachLoad_Click);
             // 
             // frmMain
             // 
@@ -1286,10 +1299,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox grpSetMotor;
         private System.Windows.Forms.GroupBox grpSetMach;
-        private System.Windows.Forms.Button btnMachStore;
+        private System.Windows.Forms.Button btnMachListStore;
         private System.Windows.Forms.ComboBox cmbMachDrvName;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnMachLoad;
+        private System.Windows.Forms.Button btnMachListLoad;
         private System.Windows.Forms.ComboBox cmbMachDrvNum;
         private System.Windows.Forms.Button btnMtrStore;
         private System.Windows.Forms.Label label3;
@@ -1298,6 +1311,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtMachChrtCnt;
+        private System.Windows.Forms.Button btnMachListDel;
     }
 }
 
