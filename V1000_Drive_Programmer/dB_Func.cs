@@ -56,9 +56,9 @@ namespace V1000_Drive_Programmer
         //}
 
         
-        public int dB_Delete(string p_dB, string p_Col, string p_Cond)
+        public bool dB_Delete(string p_dB, string p_Col, string p_Cond)
         {
-            int ret_val = 0;
+            bool ret_val = false;
             int col_idx = 0, row_idx = 0;
             string filename = DataDir + p_dB;
 
@@ -97,11 +97,7 @@ namespace V1000_Drive_Programmer
                 if(row_idx > 0)
                 {
                     (xlWorksheet.Rows[row_idx, System.Reflection.Missing.Value] as XL.Range).Delete(XL.XlDeleteShiftDirection.xlShiftUp);
-                    ret_val = 1;
-                }
-                else
-                {
-                    ret_val = 0;
+                    ret_val = true;
                 }
             }
 
@@ -297,6 +293,15 @@ namespace V1000_Drive_Programmer
             return row_cnt;
         }
 
+        public bool dB_Update_Mtr(string p_MtrNum, string p_Col, string p_Val)
+        {
+            bool ret_val = false;
+
+            string sql = "UPDATE [Sheet1$] SET " + p_Col + " = '" + p_Val + "' WHERE MOTOR_PARTNUM = " + p_MtrNum;
+            ret_val = dB_Update(dBMotor, sql);
+            return ret_val;
+        }
+
         public bool dB_Update(string p_dB, string p_ID, string p_IDVal, string p_Col, string p_Val)
         {
             bool ret_val = false;
@@ -322,7 +327,8 @@ namespace V1000_Drive_Programmer
                         try
                         {
                             OleDbCommand cmd = new OleDbCommand(p_SQL, db_conn);
-                            cmd.ExecuteNonQuery();
+                            if(cmd.ExecuteNonQuery() > 0)
+                                ret_val = true;
                         }
                         catch (Exception ex)
                         {
@@ -352,8 +358,8 @@ namespace V1000_Drive_Programmer
             txtMtrFLC.Text = "";
 
             // First combine all strings to create the appropriate column header for the motor current data 
-            string str_volt = cmbVoltMtrMax.SelectedItem.ToString();
-            string str_freq = cmbFreqMtrBase.SelectedItem.ToString();
+            string str_volt = cmbMtrVoltMax.SelectedItem.ToString();
+            string str_freq = cmbMtrFreqBase.SelectedItem.ToString();
             string hdr = "FLC_" + str_volt.Substring(0, str_volt.IndexOf(' ')) + "_" + str_freq.Substring(0, str_freq.IndexOf(' '));
 
             if((hdr != "FLC_400_60") && (hdr != "FLC_415_60") && (hdr != "FLC_460_50"))

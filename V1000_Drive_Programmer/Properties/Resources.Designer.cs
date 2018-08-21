@@ -61,11 +61,12 @@ namespace V1000_Drive_Programmer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;Provider=Microsoft.ACE.OLEDB.12.0;Data Source=&apos;&quot;;.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static string OLEBaseStr {
+        internal static System.Drawing.Icon V1000 {
             get {
-                return ResourceManager.GetString("OLEBaseStr", resourceCulture);
+                object obj = ResourceManager.GetObject("V1000", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }
