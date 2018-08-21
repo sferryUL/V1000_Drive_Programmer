@@ -44,6 +44,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.txtSlaveAddr = new System.Windows.Forms.TextBox();
             this.lblSlaveAddr = new System.Windows.Forms.Label();
             this.grpCommSettings = new System.Windows.Forms.GroupBox();
@@ -105,17 +106,17 @@
             this.lblParamChngSrc = new System.Windows.Forms.Label();
             this.txtParamChngSrc = new System.Windows.Forms.TextBox();
             this.lblVoltMachSupply = new System.Windows.Forms.Label();
-            this.cmbVoltSupply = new System.Windows.Forms.ComboBox();
+            this.cmbMtrVoltSupply = new System.Windows.Forms.ComboBox();
             this.lblVoltMotorMax = new System.Windows.Forms.Label();
-            this.cmbVoltMtrMax = new System.Windows.Forms.ComboBox();
+            this.cmbMtrVoltMax = new System.Windows.Forms.ComboBox();
             this.lblFreqMotorBase = new System.Windows.Forms.Label();
-            this.cmbFreqMtrBase = new System.Windows.Forms.ComboBox();
+            this.cmbMtrFreqBase = new System.Windows.Forms.ComboBox();
             this.lblMotorFLC = new System.Windows.Forms.Label();
             this.lblUnitsAmps1 = new System.Windows.Forms.Label();
             this.txtMtrFLC = new System.Windows.Forms.TextBox();
             this.btnMtrSet = new System.Windows.Forms.Button();
             this.grpParamChng = new System.Windows.Forms.GroupBox();
-            this.cmbFreqSupply = new System.Windows.Forms.ComboBox();
+            this.cmbMtrFreqSupply = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbMtrPartNum = new System.Windows.Forms.ComboBox();
             this.lblMotorPartNum = new System.Windows.Forms.Label();
@@ -124,6 +125,7 @@
             this.lblSelMotor = new System.Windows.Forms.Label();
             this.bwrkVFDVerify = new System.ComponentModel.BackgroundWorker();
             this.grpSetMotor = new System.Windows.Forms.GroupBox();
+            this.btnMtrDel = new System.Windows.Forms.Button();
             this.btnMtrStore = new System.Windows.Forms.Button();
             this.grpSetMach = new System.Windows.Forms.GroupBox();
             this.txtMachDrvName = new System.Windows.Forms.TextBox();
@@ -306,7 +308,7 @@
             this.statProgress});
             this.statusStrip1.Location = new System.Drawing.Point(0, 783);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1261, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1266, 22);
             this.statusStrip1.TabIndex = 37;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -633,7 +635,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1261, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1266, 24);
             this.menuStrip1.TabIndex = 48;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -799,11 +801,11 @@
             this.lblVoltMachSupply.TabIndex = 47;
             this.lblVoltMachSupply.Text = "Supply Voltage:";
             // 
-            // cmbVoltSupply
+            // cmbMtrVoltSupply
             // 
-            this.cmbVoltSupply.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVoltSupply.FormattingEnabled = true;
-            this.cmbVoltSupply.Items.AddRange(new object[] {
+            this.cmbMtrVoltSupply.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMtrVoltSupply.FormattingEnabled = true;
+            this.cmbMtrVoltSupply.Items.AddRange(new object[] {
             "208 V",
             "220 V",
             "230 V",
@@ -812,11 +814,11 @@
             "400 V",
             "415 V",
             "460 V"});
-            this.cmbVoltSupply.Location = new System.Drawing.Point(111, 19);
-            this.cmbVoltSupply.Name = "cmbVoltSupply";
-            this.cmbVoltSupply.Size = new System.Drawing.Size(68, 21);
-            this.cmbVoltSupply.TabIndex = 50;
-            this.cmbVoltSupply.SelectedIndexChanged += new System.EventHandler(this.cmbVoltMach_SelectedIndexChanged);
+            this.cmbMtrVoltSupply.Location = new System.Drawing.Point(111, 19);
+            this.cmbMtrVoltSupply.Name = "cmbMtrVoltSupply";
+            this.cmbMtrVoltSupply.Size = new System.Drawing.Size(68, 21);
+            this.cmbMtrVoltSupply.TabIndex = 50;
+            this.cmbMtrVoltSupply.SelectedIndexChanged += new System.EventHandler(this.cmbVoltMach_SelectedIndexChanged);
             // 
             // lblVoltMotorMax
             // 
@@ -827,11 +829,11 @@
             this.lblVoltMotorMax.TabIndex = 51;
             this.lblVoltMotorMax.Text = "Max Motor Voltage:";
             // 
-            // cmbVoltMtrMax
+            // cmbMtrVoltMax
             // 
-            this.cmbVoltMtrMax.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVoltMtrMax.FormattingEnabled = true;
-            this.cmbVoltMtrMax.Items.AddRange(new object[] {
+            this.cmbMtrVoltMax.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMtrVoltMax.FormattingEnabled = true;
+            this.cmbMtrVoltMax.Items.AddRange(new object[] {
             "208 V",
             "220 V",
             "230 V",
@@ -840,11 +842,11 @@
             "400 V",
             "415 V",
             "460 V"});
-            this.cmbVoltMtrMax.Location = new System.Drawing.Point(330, 19);
-            this.cmbVoltMtrMax.Name = "cmbVoltMtrMax";
-            this.cmbVoltMtrMax.Size = new System.Drawing.Size(68, 21);
-            this.cmbVoltMtrMax.TabIndex = 52;
-            this.cmbVoltMtrMax.SelectedIndexChanged += new System.EventHandler(this.cmbVoltMotorMax_SelectedIndexChanged);
+            this.cmbMtrVoltMax.Location = new System.Drawing.Point(330, 19);
+            this.cmbMtrVoltMax.Name = "cmbMtrVoltMax";
+            this.cmbMtrVoltMax.Size = new System.Drawing.Size(68, 21);
+            this.cmbMtrVoltMax.TabIndex = 52;
+            this.cmbMtrVoltMax.SelectedIndexChanged += new System.EventHandler(this.cmbVoltMotorMax_SelectedIndexChanged);
             // 
             // lblFreqMotorBase
             // 
@@ -855,18 +857,18 @@
             this.lblFreqMotorBase.TabIndex = 55;
             this.lblFreqMotorBase.Text = "Motor Base Frequency:";
             // 
-            // cmbFreqMtrBase
+            // cmbMtrFreqBase
             // 
-            this.cmbFreqMtrBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFreqMtrBase.FormattingEnabled = true;
-            this.cmbFreqMtrBase.Items.AddRange(new object[] {
+            this.cmbMtrFreqBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMtrFreqBase.FormattingEnabled = true;
+            this.cmbMtrFreqBase.Items.AddRange(new object[] {
             "50 Hz",
             "60 Hz"});
-            this.cmbFreqMtrBase.Location = new System.Drawing.Point(330, 46);
-            this.cmbFreqMtrBase.Name = "cmbFreqMtrBase";
-            this.cmbFreqMtrBase.Size = new System.Drawing.Size(68, 21);
-            this.cmbFreqMtrBase.TabIndex = 56;
-            this.cmbFreqMtrBase.SelectedIndexChanged += new System.EventHandler(this.cmbFreqMotorBase_SelectedIndexChanged);
+            this.cmbMtrFreqBase.Location = new System.Drawing.Point(330, 46);
+            this.cmbMtrFreqBase.Name = "cmbMtrFreqBase";
+            this.cmbMtrFreqBase.Size = new System.Drawing.Size(68, 21);
+            this.cmbMtrFreqBase.TabIndex = 56;
+            this.cmbMtrFreqBase.SelectedIndexChanged += new System.EventHandler(this.cmbFreqMotorBase_SelectedIndexChanged);
             // 
             // lblMotorFLC
             // 
@@ -916,18 +918,18 @@
             this.grpParamChng.TabStop = false;
             this.grpParamChng.Text = "VFD Parameter Changes";
             // 
-            // cmbFreqSupply
+            // cmbMtrFreqSupply
             // 
-            this.cmbFreqSupply.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFreqSupply.FormattingEnabled = true;
-            this.cmbFreqSupply.Items.AddRange(new object[] {
+            this.cmbMtrFreqSupply.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMtrFreqSupply.FormattingEnabled = true;
+            this.cmbMtrFreqSupply.Items.AddRange(new object[] {
             "50 Hz",
             "60 Hz"});
-            this.cmbFreqSupply.Location = new System.Drawing.Point(111, 46);
-            this.cmbFreqSupply.Name = "cmbFreqSupply";
-            this.cmbFreqSupply.Size = new System.Drawing.Size(68, 21);
-            this.cmbFreqSupply.TabIndex = 68;
-            this.cmbFreqSupply.SelectedIndexChanged += new System.EventHandler(this.cmbFreqMach_SelectedIndexChanged);
+            this.cmbMtrFreqSupply.Location = new System.Drawing.Point(111, 46);
+            this.cmbMtrFreqSupply.Name = "cmbMtrFreqSupply";
+            this.cmbMtrFreqSupply.Size = new System.Drawing.Size(68, 21);
+            this.cmbMtrFreqSupply.TabIndex = 68;
+            this.cmbMtrFreqSupply.SelectedIndexChanged += new System.EventHandler(this.cmbFreqMach_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -994,21 +996,22 @@
             // 
             // grpSetMotor
             // 
+            this.grpSetMotor.Controls.Add(this.btnMtrDel);
             this.grpSetMotor.Controls.Add(this.btnMtrStore);
             this.grpSetMotor.Controls.Add(this.btnMtrSet);
-            this.grpSetMotor.Controls.Add(this.cmbFreqSupply);
+            this.grpSetMotor.Controls.Add(this.cmbMtrFreqSupply);
             this.grpSetMotor.Controls.Add(this.txtMtrFLC);
             this.grpSetMotor.Controls.Add(this.lblUnitsAmps1);
             this.grpSetMotor.Controls.Add(this.lblMotorFLC);
             this.grpSetMotor.Controls.Add(this.label1);
             this.grpSetMotor.Controls.Add(this.lblVoltMachSupply);
             this.grpSetMotor.Controls.Add(this.cmbMtrPartNum);
-            this.grpSetMotor.Controls.Add(this.cmbVoltSupply);
+            this.grpSetMotor.Controls.Add(this.cmbMtrVoltSupply);
             this.grpSetMotor.Controls.Add(this.lblMotorPartNum);
             this.grpSetMotor.Controls.Add(this.lblVoltMotorMax);
-            this.grpSetMotor.Controls.Add(this.cmbVoltMtrMax);
+            this.grpSetMotor.Controls.Add(this.cmbMtrVoltMax);
             this.grpSetMotor.Controls.Add(this.lblFreqMotorBase);
-            this.grpSetMotor.Controls.Add(this.cmbFreqMtrBase);
+            this.grpSetMotor.Controls.Add(this.cmbMtrFreqBase);
             this.grpSetMotor.Enabled = false;
             this.grpSetMotor.Location = new System.Drawing.Point(638, 86);
             this.grpSetMotor.Name = "grpSetMotor";
@@ -1016,6 +1019,16 @@
             this.grpSetMotor.TabIndex = 49;
             this.grpSetMotor.TabStop = false;
             this.grpSetMotor.Text = "Motor Settings";
+            // 
+            // btnMtrDel
+            // 
+            this.btnMtrDel.Location = new System.Drawing.Point(49, 75);
+            this.btnMtrDel.Name = "btnMtrDel";
+            this.btnMtrDel.Size = new System.Drawing.Size(130, 23);
+            this.btnMtrDel.TabIndex = 69;
+            this.btnMtrDel.Text = "Delete Motor Values";
+            this.btnMtrDel.UseVisualStyleBackColor = true;
+            this.btnMtrDel.Click += new System.EventHandler(this.btnMtrDel_Click);
             // 
             // btnMtrStore
             // 
@@ -1142,7 +1155,6 @@
             this.cmbMachChrtNum.Name = "cmbMachChrtNum";
             this.cmbMachChrtNum.Size = new System.Drawing.Size(97, 21);
             this.cmbMachChrtNum.TabIndex = 63;
-            this.cmbMachChrtNum.SelectedIndexChanged += new System.EventHandler(this.cmbMachDrvChrt_SelectedIndexChanged);
             // 
             // label4
             // 
@@ -1178,7 +1190,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1261, 805);
+            this.ClientSize = new System.Drawing.Size(1266, 805);
             this.Controls.Add(this.grpSetMach);
             this.Controls.Add(this.grpSetMotor);
             this.Controls.Add(this.grpCommSettings);
@@ -1188,6 +1200,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox4);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";
             this.Text = "VFD Parameter Programmer & Monitor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmMain_FormClosed);
@@ -1257,13 +1270,13 @@
         private System.Windows.Forms.Label lblParamChngSrc;
         private System.Windows.Forms.TextBox txtParamChngSrc;
         private System.Windows.Forms.Label lblVoltMachSupply;
-        private System.Windows.Forms.ComboBox cmbVoltSupply;
+        private System.Windows.Forms.ComboBox cmbMtrVoltSupply;
         private System.Windows.Forms.Label lblVoltMotorMax;
-        private System.Windows.Forms.ComboBox cmbVoltMtrMax;
+        private System.Windows.Forms.ComboBox cmbMtrVoltMax;
         private System.Windows.Forms.DataGridView dgvParamViewMisMatch;
         private System.Windows.Forms.Label lblParamMismatch;
         private System.Windows.Forms.Label lblFreqMotorBase;
-        private System.Windows.Forms.ComboBox cmbFreqMtrBase;
+        private System.Windows.Forms.ComboBox cmbMtrFreqBase;
         private System.Windows.Forms.Label lblMotorFLC;
         private System.Windows.Forms.Label lblUnitsAmps1;
         private System.Windows.Forms.TextBox txtMtrFLC;
@@ -1295,7 +1308,7 @@
         private System.Windows.Forms.ComboBox cmbMtrPartNum;
         private System.Windows.Forms.Label lblMotorPartNum;
         private System.Windows.Forms.ToolStripMenuItem ctxtSchedChng_Load;
-        private System.Windows.Forms.ComboBox cmbFreqSupply;
+        private System.Windows.Forms.ComboBox cmbMtrFreqSupply;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox grpSetMotor;
         private System.Windows.Forms.GroupBox grpSetMach;
@@ -1312,6 +1325,7 @@
         private System.Windows.Forms.TextBox txtMachChrtCnt;
         private System.Windows.Forms.Button btnMachListDel;
         private System.Windows.Forms.TextBox txtMachDrvName;
+        private System.Windows.Forms.Button btnMtrDel;
     }
 }
 

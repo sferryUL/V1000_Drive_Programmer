@@ -95,7 +95,7 @@ namespace V1000_Drive_Programmer
 
             LoadCommComboBoxes();
             LoadParamComboboxes();
-            LoadMtrComboboxes();
+            LoadMtrPartNums();
             LoadMachComboboxes();
 
             SetVFDCommBtnEnable(false, false, false, false);
@@ -108,6 +108,14 @@ namespace V1000_Drive_Programmer
                 cmbMachChrtNum.DropDownStyle = ComboBoxStyle.DropDown;
             else
                 cmbMachChrtNum.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            // Same goes for motor data saving
+            if((btnMtrStore.Visible == true) && (btnMtrDel.Visible == true))
+                cmbMtrPartNum.DropDownStyle = ComboBoxStyle.DropDown;
+            else
+                cmbMtrPartNum.DropDownStyle = ComboBoxStyle.DropDownList;
+
+
         }
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -156,20 +164,6 @@ namespace V1000_Drive_Programmer
                 }
             }
         }
-
-        // load the list of motors 
-        public void LoadMtrComboboxes()
-        {
-            DataTable tbl = new DataTable();
-            if (dB_Query(dBMotor, "SELECT MOTOR_PARTNUM FROM [Sheet1$] ORDER BY MOTOR_PARTNUM ASC", ref tbl) > 0)
-            {
-                foreach (DataRow dr in tbl.Rows)
-                {
-                    cmbMtrPartNum.Items.Add(dr[0].ToString());
-                }
-            }
-        }
-        
 
         // Load list of machine codes with their description
         public void LoadMachComboboxes()
@@ -226,14 +220,12 @@ namespace V1000_Drive_Programmer
             }
 
             // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
-            SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
-            btnMtrSet.Enabled = true;                 // Turn on the Set Machine Parameters button
-            cmbVoltSupply.Enabled = true;                     // enable all the machine specific parameter setting comboboxes
-            cmbVoltMtrMax.Enabled = true;
-            cmbFreqMtrBase.Enabled = true;
-            txtMtrFLC.Enabled = true;                          // Turn on the Motor FLA textbox
-            msFile_LoadParamList.Enabled = true;            // Allow a parameter update spreadsheet to be loaded
+            if(cmbSerialPort.Items.Count > 0)
+            {
+                SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
+            }
 
+            msFile_LoadParamList.Enabled = true;                // Allow a parameter update spreadsheet to be loaded
             grpSetMotor.Enabled = true;
             grpSetMach.Enabled = true;
         }
@@ -1508,11 +1500,6 @@ namespace V1000_Drive_Programmer
             }
         }
 
-        private void cmbMachDrvChrt_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void cmbMachDrvNum_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataTable tbl = new DataTable();
@@ -1818,86 +1805,86 @@ namespace V1000_Drive_Programmer
         #endregion
 
         #region Motor Specific Functions
+
         private void cmbVoltMach_SelectedIndexChanged(object sender, EventArgs e)
         {
-            cmbVoltMtrMax.SelectedIndex = cmbVoltSupply.SelectedIndex;
+            cmbMtrVoltMax.SelectedIndex = cmbMtrVoltSupply.SelectedIndex;
 
-            if ((cmbVoltSupply.SelectedItem.ToString() == "400 V") || (cmbVoltSupply.SelectedItem.ToString() == "415 V"))
+            if ((cmbMtrVoltSupply.SelectedItem.ToString() == "400 V") || (cmbMtrVoltSupply.SelectedItem.ToString() == "415 V"))
             {
-                cmbFreqSupply.SelectedIndex = 0;
-                cmbFreqSupply.Enabled = false;
-                cmbFreqMtrBase.SelectedIndex = 0;
-                cmbFreqMtrBase.Enabled = false;
+                cmbMtrFreqSupply.SelectedIndex = 0;
+                cmbMtrFreqSupply.Enabled = false;
+                cmbMtrFreqBase.SelectedIndex = 0;
+                cmbMtrFreqBase.Enabled = false;
             }
-            else if (cmbVoltSupply.SelectedItem.ToString() == "460 V")
+            else if (cmbMtrVoltSupply.SelectedItem.ToString() == "460 V")
             {
-                cmbFreqSupply.SelectedIndex = 1;
-                cmbFreqSupply.Enabled = false;
-                cmbFreqMtrBase.SelectedIndex = 1;
-                cmbFreqMtrBase.Enabled = false;
+                cmbMtrFreqSupply.SelectedIndex = 1;
+                cmbMtrFreqSupply.Enabled = false;
+                cmbMtrFreqBase.SelectedIndex = 1;
+                cmbMtrFreqBase.Enabled = false;
             }
             else
             {
-                cmbFreqSupply.Enabled = true;
-                cmbFreqMtrBase.Enabled = true;
+                cmbMtrFreqSupply.Enabled = true;
+                cmbMtrFreqBase.Enabled = true;
             }
         }
 
         private void cmbFreqMach_SelectedIndexChanged(object sender, EventArgs e)
         {
-            cmbFreqMtrBase.SelectedIndex = cmbFreqSupply.SelectedIndex;
+            cmbMtrFreqBase.SelectedIndex = cmbMtrFreqSupply.SelectedIndex;
         }
 
         private void cmbMotorPartNum_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ((cmbVoltSupply.SelectedIndex >= 0) && (cmbFreqSupply.SelectedIndex >= 0))
+            if ((cmbMtrVoltSupply.SelectedIndex >= 0) && (cmbMtrFreqSupply.SelectedIndex >= 0))
                 GetMotorCurrent();
         }
 
         private void cmbVoltMotorMax_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbVoltSupply.SelectedIndex == -1)
-                cmbVoltSupply.SelectedIndex = cmbVoltMtrMax.SelectedIndex;
+            if (cmbMtrVoltSupply.SelectedIndex == -1)
+                cmbMtrVoltSupply.SelectedIndex = cmbMtrVoltMax.SelectedIndex;
 
-            if ((cmbVoltMtrMax.SelectedItem.ToString() == "400 V") || (cmbVoltMtrMax.SelectedItem.ToString() == "415 V"))
+            if ((cmbMtrVoltMax.SelectedItem.ToString() == "400 V") || (cmbMtrVoltMax.SelectedItem.ToString() == "415 V"))
             {
-                cmbFreqSupply.SelectedIndex = 0;
-                cmbFreqSupply.Enabled = false;
-                cmbFreqMtrBase.SelectedIndex = 0;
-                cmbFreqMtrBase.Enabled = false;
+                cmbMtrFreqSupply.SelectedIndex = 0;
+                cmbMtrFreqSupply.Enabled = false;
+                cmbMtrFreqBase.SelectedIndex = 0;
+                cmbMtrFreqBase.Enabled = false;
             }
-            else if (cmbVoltMtrMax.SelectedItem.ToString() == "460 V")
+            else if (cmbMtrVoltMax.SelectedItem.ToString() == "460 V")
             {
-                cmbFreqSupply.SelectedIndex = 1;
-                cmbFreqSupply.Enabled = false;
-                cmbFreqMtrBase.SelectedIndex = 1;
-                cmbFreqMtrBase.Enabled = false;
+                cmbMtrFreqSupply.SelectedIndex = 1;
+                cmbMtrFreqSupply.Enabled = false;
+                cmbMtrFreqBase.SelectedIndex = 1;
+                cmbMtrFreqBase.Enabled = false;
             }
             else
             {
-                cmbFreqSupply.Enabled = true;
-                cmbFreqMtrBase.Enabled = true;
+                cmbMtrFreqSupply.Enabled = true;
+                cmbMtrFreqBase.Enabled = true;
             }
 
-            if ((cmbMtrPartNum.SelectedIndex >= 0) && (cmbFreqMtrBase.SelectedIndex >= 0))
+            if ((cmbMtrPartNum.SelectedIndex >= 0) && (cmbMtrFreqBase.SelectedIndex >= 0))
                 GetMotorCurrent();
         }
 
         private void cmbFreqMotorBase_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbFreqSupply.SelectedIndex == -1)
-                cmbFreqSupply.SelectedIndex = cmbFreqMtrBase.SelectedIndex;
+            if (cmbMtrFreqSupply.SelectedIndex == -1)
+                cmbMtrFreqSupply.SelectedIndex = cmbMtrFreqBase.SelectedIndex;
 
-            if ((cmbVoltMtrMax.SelectedIndex >= 0) && (cmbMtrPartNum.SelectedIndex >= 0))
+            if ((cmbMtrVoltMax.SelectedIndex >= 0) && (cmbMtrPartNum.SelectedIndex >= 0))
                 GetMotorCurrent();
         }
-
 
         private void btnSetMotorVals(object sender, EventArgs e)
         {
             ushort volt_supply = 0, volt_out = 0, freq_base = 0, fla = 0;
 
-            if ((cmbVoltSupply.SelectedIndex == -1) || (cmbFreqMtrBase.SelectedIndex == -1) || (txtMtrFLC.Text == ""))
+            if ((cmbMtrVoltSupply.SelectedIndex == -1) || (cmbMtrFreqBase.SelectedIndex == -1) || (txtMtrFLC.Text == ""))
             {
                 MessageBox.Show("Machine supply voltage, supply frequency, and motor FLA must have valid entries!");
                 return;
@@ -1913,9 +1900,9 @@ namespace V1000_Drive_Programmer
             {
                 try
                 {
-                    volt_supply = Cell2RegVal((string)cmbVoltSupply.SelectedItem, Param_List[idx_volt_supply]);
-                    volt_out = Cell2RegVal((string)cmbVoltMtrMax.SelectedItem, Param_List[idx_volt_out]);
-                    freq_base = Cell2RegVal((string)cmbFreqMtrBase.SelectedItem, Param_List[idx_freq_base]);
+                    volt_supply = Cell2RegVal((string)cmbMtrVoltSupply.SelectedItem, Param_List[idx_volt_supply]);
+                    volt_out = Cell2RegVal((string)cmbMtrVoltMax.SelectedItem, Param_List[idx_volt_out]);
+                    freq_base = Cell2RegVal((string)cmbMtrFreqBase.SelectedItem, Param_List[idx_freq_base]);
                     fla = Cell2RegVal(txtMtrFLC.Text, Param_List[idx_fla]);
                 }
                 catch
@@ -1937,7 +1924,108 @@ namespace V1000_Drive_Programmer
 
         private void btnMtrStore_Click(object sender, EventArgs e)
         {
+            if((cmbMtrVoltSupply.SelectedIndex == -1) || (cmbMtrFreqSupply.SelectedIndex == -1))
+            {
+                ErrorMsgBox("Storing motor values requires a setting for supply voltage and supply frequency!");
+                return;
+            }
 
+            if(cmbMtrPartNum.Text == "")
+            {
+                ErrorMsgBox("Storing motor values requires an Urschel assigned motor part number!");
+                return;
+            }
+
+            if(txtMtrFLC.Text == "")
+            {
+                ErrorMsgBox("Storing motor values requires a full load current entry!");
+                return;
+            }
+
+            // Check and see if motor exists, if not, verify user is wanting to add the motor
+            string motor_num = cmbMtrPartNum.Text;
+            DataTable tbl = new DataTable();
+            if(dB_Query(dBMotor, ref tbl, "*", "MOTOR_PARTNUM", motor_num) < 1)
+            {
+                if(YNMsgBox("Motor part number " + motor_num + " does not exist in the database, would you like to add?", "Motor Does Not Exist") == DialogResult.Yes)
+                {
+                    // Get the index number of the last entry in the database
+                    dB_Query(dBMotor, ref tbl, "*", "IDX");
+
+                    int idx_last = Convert.ToInt32(tbl.Rows[tbl.Rows.Count-1]["IDX"].ToString());
+
+                    // Add the new motor to the motor database with an incremented index number.
+                    if(dB_Insert(dBMotor, "IDX, MOTOR_PARTNUM", "'" + (idx_last+1).ToString() + "', '" + motor_num + "'"))
+                        LoadMtrPartNums();
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+
+            string col_id = BuildMtrColID();
+
+            dB_Query(dBMotor, ref tbl, col_id, "MOTOR_PARTNUM", motor_num);
+            string flc = tbl.Rows[0][col_id].ToString();
+            if(flc.Equals("") == false)
+            {
+                string cap = "A FLC value already exists for motor part number " + motor_num +
+                             " at a voltage of " + cmbMtrVoltSupply.Text + "AC @ " + cmbMtrFreqSupply.Text +
+                             " Hz.\nDo you wish to overwrite this value?";
+                if(YNMsgBox(cap, "FLC Overwrite") == DialogResult.No)
+                    return;
+            }
+
+            flc = txtMtrFLC.Text;
+            dB_Update_Mtr(motor_num, col_id, flc);
+        }
+
+        private void btnMtrDel_Click(object sender, EventArgs e)
+        {
+            if(cmbMtrPartNum.Text == "")
+            {
+                ErrorMsgBox("A motor part number is required to delete any record information!");
+                return;
+            }
+
+            string motor_num = cmbMtrPartNum.Text;
+
+            if(YNMsgBox("Would you like to erase the entire motor information from the database?", "Motor Erase Option") == DialogResult.Yes)
+            {
+                if(dB_Delete(dBMotor, "MOTOR_PARTNUM", motor_num))
+                {
+                    InfoMsgBox("Motor part successfully deleted");
+                    cmbMtrPartNum.Text = "";
+                    LoadMtrPartNums();
+                }
+                else
+                    ErrorMsgBox("Motor part number entry does not exist in the database!");
+            }
+        }
+
+        // load the list of motors 
+        public void LoadMtrPartNums()
+        {
+            DataTable tbl = new DataTable();
+            if(dB_Query(dBMotor, "SELECT MOTOR_PARTNUM FROM [Sheet1$] ORDER BY MOTOR_PARTNUM ASC", ref tbl) > 0)
+            {
+                cmbMtrPartNum.Items.Clear();
+                foreach(DataRow dr in tbl.Rows)
+                {
+                    cmbMtrPartNum.Items.Add(dr[0].ToString());
+                }
+            }
+        }
+
+        private string BuildMtrColID()
+        {
+            string flc_volt = cmbMtrVoltSupply.Text.Substring(0, cmbMtrVoltSupply.Text.IndexOf(' '));
+            string flc_f = cmbMtrFreqSupply.Text.Substring(0, cmbMtrFreqSupply.Text.IndexOf(' '));
+            string col_id = "FLC_" + flc_volt + "_" + flc_f;
+
+            return col_id;
         }
 
         #endregion
@@ -1963,7 +2051,7 @@ namespace V1000_Drive_Programmer
         }
 
         #endregion
-
+        
     }
 
     public class ThreadProgressArgs : EventArgs
