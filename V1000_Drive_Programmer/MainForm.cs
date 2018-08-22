@@ -25,11 +25,13 @@ namespace V1000_Drive_Programmer
         #region Global Class Object/Variable Declarations
 
         // Database Manipulation Variables
+        //const string DataDir = "C:\\Users\\Public\\VFD_Prog_Data\\";
+        const string DataDir = "N:\\ELECTRICAL DATA\\APPLICATIONS\\VFD Programmer\\data\\";
         //const string DataDir = "data\\";
         //const string DataDir = "C:\\Users\\steve\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
-        const string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
+        //const string DataDir = "C:\\Users\\sferry\\source\\repos\\V1000_Drive_Programmer\\V1000_Drive_Programmer\\data\\";
         //const string DataDir = "C:\\Users\\sferry\\desktop\\data\\";
-        
+
         const string OLEBaseStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='";
         const string OLEEndStr = "';Extended Properties='Excel 12.0 XML;HDR=YES;';";
         const string dbFileExt = ".XLSX";
@@ -126,66 +128,16 @@ namespace V1000_Drive_Programmer
 
         #endregion
 
-        #region Combobox Load Functions
-
-        public void LoadCommComboBoxes()
-        {
-            // Load available serial ports
-            foreach (string s in System.IO.Ports.SerialPort.GetPortNames())
-                cmbSerialPort.Items.Add(s);
-
-            // select last serial port, by default it seems the add-on port is always last.
-            if(cmbSerialPort.Items.Count > 0)
-            {
-                if (cmbSerialPort.Items.Count > 1)
-                    cmbSerialPort.SelectedIndex = cmbSerialPort.Items.Count - 1;
-                else
-                    cmbSerialPort.SelectedIndex = 0;
-            }
-            else
-            {
-                string msg = "No communication port detected, would you like to continue without drive programming functionality?";
-                string caption = "Communication Port Error";
-                if(YNMsgBox(msg, caption) == DialogResult.No)
-                    this.Close();
-                
-            }
-        }
-
-        public void LoadParamComboboxes()
-        {
-            // Get the list of VFDs available and fill the drive list combo box.
-            if (dB_Query(dBVFD, "SELECT * FROM [Sheet1$]", ref dtDriveList) > 0)
-            {
-                foreach (DataRow dr in dtDriveList.Rows)
-                {
-                    string str = dr["UL_PARTNUM"].ToString() + " - " + dr["UL_DESC"].ToString();
-                    cmbDriveList.Items.Add(str);
-                }
-            }
-        }
-
-        // Load list of machine codes with their description
-        public void LoadMachComboboxes()
-        {
-            DataTable tbl = new DataTable();
-            if (dB_Query(dBMachine, "SELECT MACH_CODE, MACH_DESC FROM [Sheet1$]", ref tbl) > 0)
-            {
-                foreach (DataRow dr in tbl.Rows)
-                {
-                    string str = dr[0].ToString() + " - " + dr[1].ToString();
-                    cmbMachSel.Items.Add(str);
-                }
-            }
-        }
-        #endregion
-
-        #region Communication and Drive Combobox Functions
+        #region Communication Combobox Functions
 
         private void cmbSerialPort_SelectedIndexChanged(object sender, EventArgs e)
         {
             spVFD.PortName = cmbSerialPort.GetItemText(cmbSerialPort.SelectedItem);
         }
+
+        #endregion
+
+        #region Drive Combobox Functions
 
         private void cmbDriveSel_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -200,6 +152,7 @@ namespace V1000_Drive_Programmer
                 }
             }
 
+            
             if (Param_List_HD.Count > 0)
             {
                 cmbDriveDuty.SelectedIndex = 1;
@@ -247,8 +200,46 @@ namespace V1000_Drive_Programmer
             DataRow row = dtParamGrpDesc.Rows[cmbParamGroup.SelectedIndex];
             int index = Convert.ToInt16(row["LIST_IDX"].ToString());
 
+            dgvParamViewFull.ClearSelection();
             dgvParamViewFull.Rows[index].Selected = true;
             dgvParamViewFull.FirstDisplayedScrollingRowIndex = index;
+        }
+
+        public void LoadCommComboBoxes()
+        {
+            // Load available serial ports
+            foreach(string s in System.IO.Ports.SerialPort.GetPortNames())
+                cmbSerialPort.Items.Add(s);
+
+            // select last serial port, by default it seems the add-on port is always last.
+            if(cmbSerialPort.Items.Count > 0)
+            {
+                if(cmbSerialPort.Items.Count > 1)
+                    cmbSerialPort.SelectedIndex = cmbSerialPort.Items.Count - 1;
+                else
+                    cmbSerialPort.SelectedIndex = 0;
+            }
+            else
+            {
+                string msg = "No communication port detected, would you like to continue without drive programming functionality?";
+                string caption = "Communication Port Error";
+                if(YNMsgBox(msg, caption) == DialogResult.No)
+                    this.Close();
+
+            }
+        }
+
+        public void LoadParamComboboxes()
+        {
+            // Get the list of VFDs available and fill the drive list combo box.
+            if(dB_Query(dBVFD, "SELECT * FROM [Sheet1$]", ref dtDriveList) > 0)
+            {
+                foreach(DataRow dr in dtDriveList.Rows)
+                {
+                    string str = dr["UL_PARTNUM"].ToString() + " - " + dr["UL_DESC"].ToString();
+                    cmbDriveList.Items.Add(str);
+                }
+            }
         }
 
         #endregion
@@ -1155,20 +1146,24 @@ namespace V1000_Drive_Programmer
         {
             bool val_chng = false;
 
-            if (VFDReadRegCnt > 0)
-            {
-                if (p_NewParamVal != Param_List[p_Index].ParamVal)
-                    val_chng = true;
-            }
-            else
-            {
-                if (p_NewParamVal != Param_List[p_Index].DefVal)
-                    val_chng = true;
-            }
+            //if (VFDReadRegCnt > 0)
+            //{
+            //    if (p_NewParamVal != Param_List[p_Index].ParamVal)
+            //        val_chng = true;
+            //}
+            //else
+            //{
+            //    if (p_NewParamVal != Param_List[p_Index].DefVal)
+            //        val_chng = true;
+            //}
+
+            if(p_NewParamVal != Param_List[p_Index].DefVal)
+                val_chng = true;
+
 
             // Check and see if the parameter value actually changed. Just double-clicking on the cell and 
             // hitting enter will cause this event to trigger even if the value does not change.
-            if (val_chng)
+            if(val_chng)
             {
                 // Check and see if this parameter is already scheduled to be changed. 
                 V1000_Param_Data param = new V1000_Param_Data();
@@ -1209,7 +1204,7 @@ namespace V1000_Drive_Programmer
                     //dgvParamViewChng.Rows[dgvParamViewChng.RowCount - 1].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
 
                     // Fix the user entry to be the properly formatted string from any inaccuracies in formatting by the user.
-                    dgvParamViewFull.Rows[p_Index].Cells[4].Value = Param_Chng[Param_Chng.Count - 1].ParamValDisp;
+                    dgvParamViewFull.Rows[p_Index].Cells[4].Value = Param_Chng[idx_chng].ParamValDisp;
 
                     // Highlight the scheduled changed parameter in the default parameter and current VFD parameter 
                     // in Green-Yellow to signify that a change is scheduled for that particular parameter.
@@ -1301,6 +1296,7 @@ namespace V1000_Drive_Programmer
                 for (int i = 0; i < Param_Chng.Count; i++)
                 {
                     int idx = GetParamIndex(Param_Chng[i].RegAddress, Param_List);
+                    dgvParamViewFull.Rows[idx].Cells[4].Value = Param_Chng[i].ParamValDisp;
                     dgvParamViewFull.Rows[idx].DefaultCellStyle.BackColor = Color.GreenYellow;
                 }
             }
@@ -1802,6 +1798,20 @@ namespace V1000_Drive_Programmer
             return RetVal;
         }
 
+        // Load list of machine codes with their description
+        public void LoadMachComboboxes()
+        {
+            DataTable tbl = new DataTable();
+            if(dB_Query(dBMachine, "SELECT MACH_CODE, MACH_DESC FROM [Sheet1$]", ref tbl) > 0)
+            {
+                foreach(DataRow dr in tbl.Rows)
+                {
+                    string str = dr[0].ToString() + " - " + dr[1].ToString();
+                    cmbMachSel.Items.Add(str);
+                }
+            }
+        }
+
         #endregion
 
         #region Motor Specific Functions
@@ -1814,20 +1824,20 @@ namespace V1000_Drive_Programmer
             {
                 cmbMtrFreqSupply.SelectedIndex = 0;
                 cmbMtrFreqSupply.Enabled = false;
-                cmbMtrFreqBase.SelectedIndex = 0;
-                cmbMtrFreqBase.Enabled = false;
+                //cmbMtrFreqBase.SelectedIndex = 0;
+                //cmbMtrFreqBase.Enabled = false;
             }
             else if (cmbMtrVoltSupply.SelectedItem.ToString() == "460 V")
             {
                 cmbMtrFreqSupply.SelectedIndex = 1;
                 cmbMtrFreqSupply.Enabled = false;
-                cmbMtrFreqBase.SelectedIndex = 1;
-                cmbMtrFreqBase.Enabled = false;
+                //cmbMtrFreqBase.SelectedIndex = 1;
+                //cmbMtrFreqBase.Enabled = false;
             }
             else
             {
                 cmbMtrFreqSupply.Enabled = true;
-                cmbMtrFreqBase.Enabled = true;
+                //cmbMtrFreqBase.Enabled = true;
             }
         }
 
@@ -1851,20 +1861,20 @@ namespace V1000_Drive_Programmer
             {
                 cmbMtrFreqSupply.SelectedIndex = 0;
                 cmbMtrFreqSupply.Enabled = false;
-                cmbMtrFreqBase.SelectedIndex = 0;
-                cmbMtrFreqBase.Enabled = false;
+                //cmbMtrFreqBase.SelectedIndex = 0;
+                //cmbMtrFreqBase.Enabled = false;
             }
             else if (cmbMtrVoltMax.SelectedItem.ToString() == "460 V")
             {
                 cmbMtrFreqSupply.SelectedIndex = 1;
                 cmbMtrFreqSupply.Enabled = false;
-                cmbMtrFreqBase.SelectedIndex = 1;
-                cmbMtrFreqBase.Enabled = false;
+                //cmbMtrFreqBase.SelectedIndex = 1;
+                //cmbMtrFreqBase.Enabled = false;
             }
             else
             {
                 cmbMtrFreqSupply.Enabled = true;
-                cmbMtrFreqBase.Enabled = true;
+                //cmbMtrFreqBase.Enabled = true;
             }
 
             if ((cmbMtrPartNum.SelectedIndex >= 0) && (cmbMtrFreqBase.SelectedIndex >= 0))
