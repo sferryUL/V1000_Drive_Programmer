@@ -65,6 +65,7 @@
             this.ctxtSchedChng = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtSchedChng_Load = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSchedChng_Save = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtSchedChng_Remove = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSchedChng_Clear = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtDriveMod = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtDriveMod_Save = new System.Windows.Forms.ToolStripMenuItem();
@@ -348,29 +349,37 @@
             this.ctxtSchedChng.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtSchedChng_Load,
             this.ctxtSchedChng_Save,
+            this.ctxtSchedChng_Remove,
             this.ctxtSchedChng_Clear});
             this.ctxtSchedChng.Name = "ctxtSchedChng";
-            this.ctxtSchedChng.Size = new System.Drawing.Size(216, 70);
+            this.ctxtSchedChng.Size = new System.Drawing.Size(219, 92);
             this.ctxtSchedChng.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtSchedChng_Opening);
             // 
             // ctxtSchedChng_Load
             // 
             this.ctxtSchedChng_Load.Name = "ctxtSchedChng_Load";
-            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(215, 22);
+            this.ctxtSchedChng_Load.Size = new System.Drawing.Size(218, 22);
             this.ctxtSchedChng_Load.Text = "Load Change List from File";
             this.ctxtSchedChng_Load.Click += new System.EventHandler(this.LoadParams);
             // 
             // ctxtSchedChng_Save
             // 
             this.ctxtSchedChng_Save.Name = "ctxtSchedChng_Save";
-            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(215, 22);
+            this.ctxtSchedChng_Save.Size = new System.Drawing.Size(218, 22);
             this.ctxtSchedChng_Save.Text = "Save Change List to File";
             this.ctxtSchedChng_Save.Click += new System.EventHandler(this.SaveParams);
+            // 
+            // ctxtSchedChng_Remove
+            // 
+            this.ctxtSchedChng_Remove.Name = "ctxtSchedChng_Remove";
+            this.ctxtSchedChng_Remove.Size = new System.Drawing.Size(218, 22);
+            this.ctxtSchedChng_Remove.Text = "Remove Parameter Change";
+            this.ctxtSchedChng_Remove.Click += new System.EventHandler(this.ctxtSchedChng_Remove_Click);
             // 
             // ctxtSchedChng_Clear
             // 
             this.ctxtSchedChng_Clear.Name = "ctxtSchedChng_Clear";
-            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(215, 22);
+            this.ctxtSchedChng_Clear.Size = new System.Drawing.Size(218, 22);
             this.ctxtSchedChng_Clear.Text = "Clear Change List";
             this.ctxtSchedChng_Clear.Click += new System.EventHandler(this.clearScheduledChangesToolStripMenuItem_Click);
             // 
@@ -1326,6 +1335,7 @@
         private System.Windows.Forms.Button btnMachListDel;
         private System.Windows.Forms.TextBox txtMachDrvName;
         private System.Windows.Forms.Button btnMtrDel;
+        private System.Windows.Forms.ToolStripMenuItem ctxtSchedChng_Remove;
     }
 }
 

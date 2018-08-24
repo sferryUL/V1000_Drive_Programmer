@@ -100,7 +100,7 @@ namespace V1000_Drive_Programmer
             LoadMtrPartNums();
             LoadMachComboboxes();
 
-            SetVFDCommBtnEnable(false, false, false, false);
+            SetVFDCommBtnEnable(0x00);
             cmbDriveList.Focus();
 
             // In order to protect the database, and rather than using a password, if the
@@ -151,7 +151,6 @@ namespace V1000_Drive_Programmer
                     GetParamList(row, "PARAM_HD_LIST", ref dtParamListHD, ref Param_List_HD);
                 }
             }
-
             
             if (Param_List_HD.Count > 0)
             {
@@ -175,7 +174,7 @@ namespace V1000_Drive_Programmer
             // Enable buttons, comboboxes, and text boxes after reading all the drive setting information
             if(cmbSerialPort.Items.Count > 0)
             {
-                SetVFDCommBtnEnable(true, true, false, false);  // Turn on the Read & Reinitialize buttons
+                SetVFDCommBtnEnable(0x03);  // Turn on the VFD communication buttons
             }
 
             msFile_LoadParamList.Enabled = true;                // Allow a parameter update spreadsheet to be loaded
@@ -389,7 +388,7 @@ namespace V1000_Drive_Programmer
                 cmMisMatchDefVal.HeaderText = "Default Value";
                 
                 // disable the VFD communication buttons while a read is in progress.
-                SetVFDCommBtnEnable(false, false, false, false);
+                SetVFDCommBtnEnable(0x00);
             }
         }
 
@@ -456,7 +455,6 @@ namespace V1000_Drive_Programmer
                     else
                         dgvParamViewFull.Rows[i].DefaultCellStyle.BackColor = Color.White;
                 }
-                SetVFDCommBtnEnable(true, true, false, false);
             }
             else
             {
@@ -466,7 +464,7 @@ namespace V1000_Drive_Programmer
 
             // clear all the status bar values and set them as invisible
             SetStatusBar(false);
-
+            SetVFDCommBtnEnable(0x0F);
         }
         #endregion
 
@@ -501,7 +499,7 @@ namespace V1000_Drive_Programmer
 
                     // click the Read VFD button to refresh the datagridview for the full parameter 
                     // list and clear the datagridview for the modified parameter list 
-                    btnReadVFD_Click(sender, e);
+                    //btnReadVFD_Click(sender, e);
                 }
             }
 
@@ -642,8 +640,6 @@ namespace V1000_Drive_Programmer
             }
         }
 
-        
-
         private void bwrkModVFD_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // clear all the status bar values and set them as invisible
@@ -655,7 +651,8 @@ namespace V1000_Drive_Programmer
             if (ProgressArgs.VFDWrite_Stat == ThreadProgressArgs.Stat_Complete)
             {
                 Param_Chng.Clear();
-                dgvParamViewChng.Rows.Clear();
+                RefreshParamViews();
+                cmbParamGroup_SelectedIndexChanged(sender, (EventArgs) e);
                 MessageBox.Show("VFD Programming Complete!!");
             }
             else
@@ -983,18 +980,31 @@ namespace V1000_Drive_Programmer
             {
                 ctxtSchedChng_Save.Enabled = true;
                 ctxtSchedChng_Clear.Enabled = true;
+                ctxtSchedChng_Remove.Enabled = true;
             }
             else
             {
                 ctxtSchedChng_Save.Enabled = false;
                 ctxtSchedChng_Clear.Enabled = false;
+                ctxtSchedChng_Remove.Enabled = false;
             }
+        }
+
+        private void ctxtSchedChng_Remove_Click(object sender, EventArgs e)
+        {
+            int idx = dgvParamViewChng.CurrentCell.RowIndex;
+
+            dgvParamViewChng.Rows.RemoveAt(idx);
+            Param_Chng.RemoveAt(idx);
+
+            RefreshParamViews();
         }
 
         private void clearScheduledChangesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Param_Chng.Clear();
             RefreshParamViews();
+            SetVFDCommBtnEnable(0x03);
         }
 
         private void clearListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1629,6 +1639,8 @@ namespace V1000_Drive_Programmer
             dB_Update(dBMachine, "MACH_CODE", mach_code, "CHRT_CNT", chart_cnt.ToString());
 
             UpdateMachChrtInfo();
+
+            InfoMsgBox("Parameter chart was successfully stored.");
         }
 
         private void btnMachListDel_Click(object sender, EventArgs e)
@@ -1681,6 +1693,8 @@ namespace V1000_Drive_Programmer
             // If the chart count is now 0 then delete the machine specific database for now.
             if(chart_cnt < 1)
                 dB_Drop(mach_charts);
+
+            InfoMsgBox("Parameter chart was successfully deleted.");
 
         }
 
@@ -2061,6 +2075,7 @@ namespace V1000_Drive_Programmer
         }
 
         #endregion
+
         
     }
 

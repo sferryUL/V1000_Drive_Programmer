@@ -60,7 +60,7 @@ namespace V1000_Drive_Programmer
         {
             bool ret_val = false;
             int col_idx = 0, row_idx = 0;
-            string filename = DataDir + p_dB;
+            string filename = DataDir + p_dB + dbFileExt;
 
             XL.Application xlApp = new XL.Application();
             XL._Workbook xlWorkbook = xlApp.Workbooks.Open(filename);
